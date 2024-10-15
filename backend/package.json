@@ -11,6 +11,13 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "5.20.0",
+    "@types/body-parser": "^1.19.5",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
     "prisma": "^5.20.0"
   }
 }

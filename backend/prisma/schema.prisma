@@ -45,13 +45,11 @@ model Event {
 }
 
 model OrderBook {
-  id          String     @id @default(cuid())
-  eventId     String     @unique
-  topPriceYes Float
-  topPriceNo  Float
-  no          NoOrder[]
-  event       Event      @relation(fields: [eventId], references: [id])
-  yes         YesOrder[]
+  id      String     @id @default(cuid())
+  eventId String     @unique
+  no      NoOrder[]
+  event   Event      @relation(fields: [eventId], references: [id])
+  yes     YesOrder[]
 }
 
 model YesOrder {
