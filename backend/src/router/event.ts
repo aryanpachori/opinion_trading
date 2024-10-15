@@ -1,7 +1,7 @@
 import { Router } from "express";
 import prisma from "../utils/db";
 import { initializeOrderBook } from "../services/initializeOB";
-
+import axios from "axios";
 const router = Router();
 
 router.post("/create", async (req, res) => {
@@ -25,7 +25,7 @@ router.post("/create", async (req, res) => {
         },
       });
       const orderbook = initializeOrderBook();
-      await prisma.orderBook.create({
+      const workerOB = await prisma.orderBook.create({
         data: {
           eventId: event.id,
 
@@ -44,10 +44,17 @@ router.post("/create", async (req, res) => {
             })),
           },
         },
+        include: {
+          yes: true,
+          no: true,
+        },
       });
+      await axios.post("http://localhost:3002/v1/worker/incomingOrderbook", {
+        workerOB,
+      });
+      res.status(401).json({ message: "Event created successfully" });
+      return;
     }
-    res.status(401).json({ message: "Event created successfully" });
-    return;
   }
   res.status(401).json({ message: "user is not an admin" });
   return;

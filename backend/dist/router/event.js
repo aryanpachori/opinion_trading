@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const db_1 = __importDefault(require("../utils/db"));
 const initializeOB_1 = require("../services/initializeOB");
+const axios_1 = __importDefault(require("axios"));
 const router = (0, express_1.Router)();
 router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId, title, description } = req.body;
@@ -37,7 +38,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
                 },
             });
             const orderbook = (0, initializeOB_1.initializeOrderBook)();
-            yield db_1.default.orderBook.create({
+            const workerOB = yield db_1.default.orderBook.create({
                 data: {
                     eventId: event.id,
                     yes: {
@@ -55,12 +56,19 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
                         })),
                     },
                 },
+                include: {
+                    yes: true,
+                    no: true,
+                },
+            });
+            yield axios_1.default.post("http://localhost:3002/v1/worker/incomingOrderbook", {
+                workerOB,
             });
         }
-        res.json(401).json({ message: "Event created successfully" });
+        res.status(401).json({ message: "Event created successfully" });
         return;
     }
-    res.json(401).json({ message: "user is not an admin" });
+    res.status(401).json({ message: "user is not an admin" });
     return;
 }));
 exports.default = router;

@@ -9,11 +9,11 @@ const initializeOrderBook = () => {
     for (let price = 0.5; price <= 9.5; price += 0.5) {
         orderBook.yes.push({
             price,
-            quantity: 0,
+            quantity: Math.floor(Math.random() * 100) + 1,
         });
         orderBook.no.push({
             price,
-            quantity: 0,
+            quantity: Math.floor(Math.random() * 100) + 1,
         });
     }
     return orderBook;
