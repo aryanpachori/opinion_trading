@@ -49,9 +49,11 @@ router.post("/create", async (req, res) => {
           no: true,
         },
       });
+      console.log(workerOB);
       await axios.post("http://localhost:3002/v1/worker/incomingOrderbook", {
         workerOB,
       });
+
       res.status(401).json({ message: "Event created successfully" });
       return;
     }

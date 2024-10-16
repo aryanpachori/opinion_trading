@@ -25,15 +25,17 @@ export async function startWorker() {
         no: event.orderBook.no,
       };
     }
+    console.log(inMemoryOrderBooks[event.id]);
   });
+ 
   console.log("All active orderbooks reinitialized from database.");
 
   const balances = await prisma.user.findMany();
   balances.forEach((user) => {
     inr_balances[user.id] = {
-        id : user.id,
+      id: user.id,
       balance: user.balance,
     };
-    console.log(inr_balances[user.id])
+    console.log(inr_balances[user.id]);
   });
 }

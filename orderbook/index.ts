@@ -7,7 +7,7 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use("v1/worker/", orderRouter);
+app.use("/v1/worker", orderRouter);
 startWorker();
 
 app.listen(3002, () => {

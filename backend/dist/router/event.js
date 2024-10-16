@@ -61,12 +61,13 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
                     no: true,
                 },
             });
+            console.log(workerOB);
             yield axios_1.default.post("http://localhost:3002/v1/worker/incomingOrderbook", {
                 workerOB,
             });
+            res.status(401).json({ message: "Event created successfully" });
+            return;
         }
-        res.status(401).json({ message: "Event created successfully" });
-        return;
     }
     res.status(401).json({ message: "user is not an admin" });
     return;
