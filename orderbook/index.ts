@@ -9,7 +9,8 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/v1/worker", orderRouter);
-setupWebSocket()
+
+//setupWebSocket()
 app.listen(3002, () => {
   console.log("worker running on 3002");
 });

@@ -3,9 +3,10 @@ import {
   inMemoryOrderBooks,
   inr_balances,
 } from "../utils/global";
+import { BroadcastChannel } from "./redisClient";
 import { WebsocketServer } from "./websockets";
 
-export function initiateOrder(
+export async function initiateOrder(
   userId: string,
   eventId: string,
   type: "YES" | "NO",
@@ -86,6 +87,7 @@ export function initiateOrder(
       no: orderbook.NO,
     },
   };
+  await BroadcastChannel(eventId, broadcastData);
   WebsocketServer.broadcast(eventId, broadcastData);
   return;
 }

@@ -79,7 +79,7 @@ export async function exit(
           }
         }
         inMemory_OrderId[orderId].status = "EXECUTED";
-        console.log(inMemory_OrderId[orderId]);
+          console.log(inMemory_OrderId[orderId])
         order.quantity -= quantity;
       }
     });
@@ -95,7 +95,7 @@ export async function exit(
       }
     });
     inMemory_OrderId[orderId].type = "SELL";
-    console.log(inMemory_OrderId[orderId]);
+    console.log(inMemory_OrderId[orderId])
   }
   const broadcastData = {
     orderbook: {
