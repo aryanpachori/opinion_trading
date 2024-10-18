@@ -3,7 +3,7 @@ import {
   inMemory_trades,
   inMemoryOrderBooks,
 } from "../utils/global";
-import { WebsocketServer } from "./websockets";
+import { BroadcastChannel } from "./redisClient";
 
 export async function exit(
   eventId: string,
@@ -79,7 +79,7 @@ export async function exit(
           }
         }
         inMemory_OrderId[orderId].status = "EXECUTED";
-          console.log(inMemory_OrderId[orderId])
+        console.log(inMemory_OrderId[orderId]);
         order.quantity -= quantity;
       }
     });
@@ -95,7 +95,7 @@ export async function exit(
       }
     });
     inMemory_OrderId[orderId].type = "SELL";
-    console.log(inMemory_OrderId[orderId])
+    console.log(inMemory_OrderId[orderId]);
   }
   const broadcastData = {
     orderbook: {
@@ -103,6 +103,6 @@ export async function exit(
       no: orderbook.NO,
     },
   };
-  WebsocketServer.broadcast(eventId, broadcastData);
+  await BroadcastChannel(eventId, broadcastData);
   return;
 }

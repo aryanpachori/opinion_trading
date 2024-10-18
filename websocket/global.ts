@@ -13,4 +13,4 @@ interface UserQuantities {
   orderId?: string;
 }
 
-export const inMemoryOrderBooks: { [eventId: string]: orderbook } = {};
+export const inMemoryOrderBooks: { [eventId: string]: any } = {};

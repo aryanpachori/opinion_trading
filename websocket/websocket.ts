@@ -18,6 +18,12 @@ export const setupWebSocket = () => {
         if (!existingClient) {
           clients.push({ ws, eventId: parsedMessage.eventId });
         }
+        const orderBook = inMemoryOrderBooks[parsedMessage.eventId];
+        if (!orderBook) {
+          ws.send("null");
+        } else {
+          ws.send(JSON.stringify(orderBook));
+        }
       }
     });
 

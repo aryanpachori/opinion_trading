@@ -4,7 +4,7 @@ import {
   inr_balances,
 } from "../utils/global";
 import { BroadcastChannel } from "./redisClient";
-import { WebsocketServer } from "./websockets";
+
 
 export async function initiateOrder(
   userId: string,
@@ -88,6 +88,6 @@ export async function initiateOrder(
     },
   };
   await BroadcastChannel(eventId, broadcastData);
-  WebsocketServer.broadcast(eventId, broadcastData);
+  
   return;
 }
