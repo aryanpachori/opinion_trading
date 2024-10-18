@@ -5,6 +5,7 @@ import {
   inr_balances,
 } from "../utils/global";
 import { initiateOrder } from "../service/intialiseOrder";
+import { exit } from "../service/exit";
 
 const router = Router();
 
@@ -27,21 +28,34 @@ router.post("/initiate", async (req, res) => {
     type: "BUY",
     price: price,
     quantity: quantity,
+    status: "LIVE",
   };
   console.log(inMemory_OrderId);
 
-  await initiateOrder(userId, eventId, type, price, quantity , orderId);
+  await initiateOrder(userId, eventId, type, price, quantity, orderId);
   res.json({ message: "success" });
   return;
 });
 
 router.post("/exit", async (req, res) => {
-  const { userId, eventId, type, price, quantity } = req.body;
-  if (!userId || !eventId || !type || !price || !quantity) {
+  const { userId, eventId, type, price, quantity, orderId } = req.body;
+  if (
+    !userId ||
+    !eventId ||
+    !type ||
+    !price ||
+    !quantity ||
+    !inMemory_OrderId[orderId]
+  ) {
     res.json({ message: "Invalid details" });
     return;
   }
-});
+  await exit(eventId, type, price, quantity, orderId, userId);
+  res.json({ message: "Order processed successfully" });
+  return;
+}); 
+
+
 
 // router.post("/incomingOrderbook", async (req, res) => {
 //   const { workerOB } = req.body;

@@ -21,7 +21,7 @@ export function initiateOrder(
   const cost = price * quantity;
   inr_balances[userId].balance -= cost;
   inr_balances[userId].lockedBalance += cost;
-  console.log(inr_balances[userId]);
+
   let remainingQty = quantity;
 
   for (let order of sortedOrders) {
@@ -75,9 +75,6 @@ export function initiateOrder(
           inr_balances[userOrder.userId!].lockedBalance -=
             order.price * userTradeQty;
           inr_balances[userId].lockedBalance -= cost;
-          console.log(inr_balances[userId]);
-
-          console.log(inr_balances[userOrder.userId!]);
         }
       }
     }

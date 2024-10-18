@@ -32,6 +32,7 @@ interface OrderSchema {
   type: "SELL" | "BUY";
   price: number;
   quantity: number;
+  status : "LIVE"| "EXECUTED"
 }
 export const inMemoryOrderBooks: { [eventId: string]: orderbook } = {};
 export const inr_balances: { [userId: string]: INRBalance } = {};
@@ -60,7 +61,7 @@ const eventId = "testevent";
 inMemoryOrderBooks[eventId] = generateOrderbook();
 console.log(inMemoryOrderBooks[eventId]);
 
-const users = ["user1", "user2", "user3"];
+const users = ["user1", "user2", "user3", "user4"];
 
 for (const user of users) {
   inr_balances[user] = {
