@@ -1,6 +1,42 @@
-export const inMemoryOrderBooks: { [eventId: string]: any } = {};
-export const inr_balances: { [userId: string]: any } = {};
-export const inMemory_trades: { [trade_id: string]: any } = {};
+interface INRBalance {
+  balance: number;
+  lockedBalance: number;
+}
+interface Trades {
+  eventId: string;
+  sellerId: string;
+  sell_qty: number;
+  buyerId: string;
+  buy_qty: number;
+  Buyprice: number;
+  Sellprice: number;
+  sellerOrder_id: string;
+  buyerOrder_id: string;
+}
+interface orderbook {
+  YES: Order[];
+  NO: Order[];
+}
+interface Order {
+  price: number;
+  quantity: number;
+  UserQuantities: UserQuantities[];
+}
+interface UserQuantities {
+  userId?: string;
+  quantity?: number;
+  orderId?: string;
+}
+interface OrderSchema {
+  side: "YES" | "NO";
+  type: "SELL" | "BUY";
+  price: number;
+  quantity: number;
+}
+export const inMemoryOrderBooks: { [eventId: string]: orderbook } = {};
+export const inr_balances: { [userId: string]: INRBalance } = {};
+export const inMemory_trades: { [trade_id: string]: Trades } = {};
+export const inMemory_OrderId: { [order_id: string]: OrderSchema } = {};
 
 const generateOrderbook = () => {
   const YES = [];
@@ -10,12 +46,12 @@ const generateOrderbook = () => {
     YES.push({
       price: price,
       quantity: 0,
-      userQuantities: [],
+      UserQuantities: [],
     });
     NO.push({
       price: price,
       quantity: 0,
-      userQuantities: [],
+      UserQuantities: [],
     });
   }
   return { YES, NO };
@@ -32,5 +68,4 @@ for (const user of users) {
     lockedBalance: 0,
   };
 }
-
 console.log(inr_balances);

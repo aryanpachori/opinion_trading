@@ -1,24 +1,46 @@
 import { Router } from "express";
-import { inMemoryOrderBooks } from "../utils/global";
+import {
+  inMemory_OrderId,
+  inMemoryOrderBooks,
+  inr_balances,
+} from "../utils/global";
 import { initiateOrder } from "../service/intialiseOrder";
 
 const router = Router();
 
-router.post("/buyOrder", async(req, res) => {
+router.post("/initiate", async (req, res) => {
   const { userId, eventId, type, price, quantity } = req.body;
   if (!userId || !eventId || !type || !price || !quantity) {
     res.json({ message: "invalid details" });
     return;
   }
+  if (inr_balances[userId].balance < price * quantity) {
+    res.json({ message: "not enough balance" });
+  }
   if (!inMemoryOrderBooks[eventId]) {
     res.json({ message: "no orderbook found" });
     return;
   }
-  
+  const orderId = `order_${Math.random().toString()}`;
+  inMemory_OrderId[orderId] = {
+    side: type,
+    type: "BUY",
+    price: price,
+    quantity: quantity,
+  };
+  console.log(inMemory_OrderId);
 
- await initiateOrder(userId, eventId, type, price, quantity)
- res.json({ message: "success" });
- return;
+  await initiateOrder(userId, eventId, type, price, quantity , orderId);
+  res.json({ message: "success" });
+  return;
+});
+
+router.post("/exit", async (req, res) => {
+  const { userId, eventId, type, price, quantity } = req.body;
+  if (!userId || !eventId || !type || !price || !quantity) {
+    res.json({ message: "Invalid details" });
+    return;
+  }
 });
 
 // router.post("/incomingOrderbook", async (req, res) => {
