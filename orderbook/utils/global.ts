@@ -33,6 +33,7 @@ interface OrderSchema {
   price: number;
   quantity: number;
   status : "LIVE"| "EXECUTED"
+  userId : string
 }
 export const inMemoryOrderBooks: { [eventId: string]: orderbook } = {};
 export const inr_balances: { [userId: string]: INRBalance } = {};

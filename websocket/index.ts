@@ -18,12 +18,12 @@ async function processQueue() {
     const message = await redis.rPop("broadcastQueue");
     if (message) {
       const { eventId, data } = JSON.parse(message);
-      const orderbook = inMemoryOrderBooks[eventId];
-      if(!orderbook){
-        inMemoryOrderBooks[eventId]={data}
-      }else{
-        inMemoryOrderBooks[eventId]={data}
-      }
+      const orderbook = data.orderbook
+
+      inMemoryOrderBooks[eventId] = { orderbook };
+
+      inMemoryOrderBooks[eventId] = { orderbook};
+
       WebsocketServer.broadcast(eventId, data);
     }
   }

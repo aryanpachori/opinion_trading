@@ -29,6 +29,7 @@ router.post("/initiate", async (req, res) => {
     price: price,
     quantity: quantity,
     status: "LIVE",
+    userId: userId,
   };
   console.log(inMemory_OrderId);
 
@@ -53,9 +54,7 @@ router.post("/exit", async (req, res) => {
   await exit(eventId, type, price, quantity, orderId, userId);
   res.json({ message: "Order processed successfully" });
   return;
-}); 
-
-
+});
 
 // router.post("/incomingOrderbook", async (req, res) => {
 //   const { workerOB } = req.body;
