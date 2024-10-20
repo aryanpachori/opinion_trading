@@ -32,13 +32,18 @@ interface OrderSchema {
   type: "SELL" | "BUY";
   price: number;
   quantity: number;
-  status : "LIVE"| "EXECUTED"
-  userId : string
+  status: "LIVE" | "EXECUTED";
+  userId: string;
+}
+interface Event {
+  title: string;
+  description: string;
 }
 export const inMemoryOrderBooks: { [eventId: string]: orderbook } = {};
 export const inr_balances: { [userId: string]: INRBalance } = {};
 export const inMemory_trades: { [trade_id: string]: Trades } = {};
 export const inMemory_OrderId: { [order_id: string]: OrderSchema } = {};
+export const inMemory_events: { [eventId: string]: Event } = {};
 
 const generateOrderbook = () => {
   const YES = [];
