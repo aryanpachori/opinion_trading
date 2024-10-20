@@ -7,94 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id             String           @id @default(cuid())
-  balance        Float            @default(0.0)
-  role           UserRole
-  Event          Event[]
-  portfolio      Portfolio?
-  events         Event[]          @relation("EventParticipants")
-  Order          Order?
-  UserQuantities UserQuantities[]
-}
-
 model Portfolio {
   id              String   @id @default(cuid())
   userId          String   @unique
   currentBalances Float    @default(0.0)
   createdAt       DateTime @default(now())
-  user            User     @relation(fields: [userId], references: [id])
   order           Order[]
 }
 
 model Order {
-  id             String           @id @default(cuid())
-  userId         String           @unique
-  user           User             @relation(fields: [userId], references: [id])
-  price          Float
-  Quantity       Int
-  Side           TradeSide
-  type           OrderType
-  status         OrderStatus
-  trade          Trade[]
-  portfolio      Portfolio?       @relation(fields: [portfolioId], references: [id])
-  portfolioId    String?
-  UserQuantities UserQuantities[]
-}
-
-model Event {
-  id           String      @id @default(cuid())
-  title        String
-  description  String
-  adminId      String
-  status       EventStatus @default(ONGOING)
-  createdAt    DateTime    @default(now())
-  admin        User        @relation(fields: [adminId], references: [id])
-  orderBook    OrderBook?
-  participants User[]      @relation("EventParticipants")
-}
-
-model OrderBook {
-  id      String     @id @default(cuid())
-  eventId String     @unique
-  no      NoOrder[]
-  event   Event      @relation(fields: [eventId], references: [id])
-  yes     YesOrder[]
-}
-
-model UserQuantities {
-  id         String   @id @default(cuid())
-  orderId    String
-  order      Order    @relation(fields: [orderId], references: [id])
-  userId     String
-  Quantity   Int
-  user       User     @relation(fields: [userId], references: [id])
-  yesOrderid String
-  yesOrder   YesOrder @relation(fields: [yesOrderid], references: [id])
-  noOrderid  String
-  noOrder    NoOrder  @relation(fields: [noOrderid], references: [id])
-}
-
-model YesOrder {
-  id            String           @id @default(cuid())
-  orderBookId   String
-  price         Float
-  quantity      Int
-  createdAt     DateTime         @default(now())
-  type          OrderType
-  orderBook     OrderBook        @relation(fields: [orderBookId], references: [id])
-  userQuantites UserQuantities[]
-}
-
-model NoOrder {
-  id            String           @id @default(cuid())
-  orderBookId   String
-  price         Float
-  quantity      Int
-  createdAt     DateTime         @default(now())
-  type          OrderType
-  orderBook     OrderBook        @relation(fields: [orderBookId], references: [id])
-  userQuantites UserQuantities[]
+  id          String      @id @default(cuid())
+  userId      String      @unique
+  price       Float
+  Quantity    Int
+  Side        TradeSide
+  type        OrderType
+  status      OrderStatus
+  trade       Trade[]
+  portfolio   Portfolio?  @relation(fields: [portfolioId], references: [id])
+  portfolioId String?
 }
 
 model Trade {

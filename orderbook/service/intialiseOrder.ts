@@ -18,7 +18,7 @@ export async function initiateOrder(
   const oppType = type === "YES" ? "NO" : "YES";
   const sortedOrders = orderbook[type].sort(
     (a: any, b: any) => a.price - b.price
-  );
+  ); 
   const cost = price * quantity;
   inr_balances[userId].balance -= cost;
   inr_balances[userId].lockedBalance += cost;

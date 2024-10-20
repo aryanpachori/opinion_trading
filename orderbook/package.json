@@ -2,6 +2,7 @@
   "name": "orderbook",
   "module": "index.ts",
   "type": "module",
+  
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -16,6 +17,7 @@
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.1",
+    "fs": "^0.0.1-security",
     "prisma": "^5.20.0",
     "redis": "^4.7.0"
   }
