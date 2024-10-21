@@ -4,6 +4,10 @@ import bodyParser from "body-parser";
 
 import orderRouter from "./router/order";
 import { redis } from "./service/redisClient";
+import { initiateOrder } from "./service/intialiseOrder";
+import { exit } from "./service/exit";
+import { userCreate, userLogin } from "./service/userAuth";
+import { userBalance, userRecharge } from "./service/userBalance";
 
 const app = express();
 
@@ -16,6 +20,36 @@ async function processQueue() {
     if (data) {
       const message = JSON.parse(data);
       console.log(message);
+      const { type } = message;
+
+      switch (type) {
+        case "userCreation":
+          await userCreate(message);
+          break;
+
+        case "userLogin":
+          await userLogin(message);
+          break;
+
+        case "userRecharge":
+          await userRecharge(message);
+          break;
+
+        case "userBalance":
+          await userBalance(message);
+          break;
+
+        // case "getEvents":
+        //   await getEvents(message);
+        //   break;
+        // case "initiateOrder":
+        //   await initiateOrder(message);
+        //   break;
+
+        // case "orderExit":
+        //   await exit(message);
+        //   break;
+      }
     }
   }
 }

@@ -7,94 +7,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          String     @id @default(cuid())
-  phoneNumber String     @unique
-  balance     Float      @default(0.0)
-  role        UserRole
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @default(now())
-  Event       Event[]
-  OTP         OTP[]
-  portfolio   Portfolio?
-  events      Event[]    @relation("EventParticipants")
-}
-
 model Portfolio {
   id              String   @id @default(cuid())
   userId          String   @unique
   currentBalances Float    @default(0.0)
   createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  user            User     @relation(fields: [userId], references: [id])
-  trades          Trade[]
-}
-
-model Event {
-  id           String      @id @default(cuid())
-  title        String
-  description  String
-  adminId      String
-  status       EventStatus @default(ONGOING)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  admin        User        @relation(fields: [adminId], references: [id])
-  orderBook    OrderBook?
-  Trade        Trade[]
-  participants User[]      @relation("EventParticipants")
-}
-
-model OrderBook {
-  id      String     @id @default(cuid())
-  eventId String     @unique
-  no      NoOrder[]
-  event   Event      @relation(fields: [eventId], references: [id])
-  yes     YesOrder[]
-}
-
-model YesOrder {
-  id          String    @id @default(cuid())
-  orderBookId String
-  price       Float
-  quantity    Int
-  createdAt   DateTime  @default(now())
-  type        OrderType
-  orderBook   OrderBook @relation(fields: [orderBookId], references: [id])
-}
-
-model NoOrder {
-  id          String    @id @default(cuid())
-  orderBookId String
-  price       Float
-  quantity    Int
-  createdAt   DateTime  @default(now())
-  type        OrderType
-  orderBook   OrderBook @relation(fields: [orderBookId], references: [id])
+  Order           Order[]
 }
 
 model Trade {
-  id          String      @id @default(cuid())
-  portfolioId String
-  eventId     String
-  price       Float
-  quantity    Int
-  side        TradeSide
-  createdAt   DateTime    @default(now())
-  gainloss    Float?      @default(0)
-  status      TradeStatus @default(ACTIVE)
-  event       Event       @relation(fields: [eventId], references: [id])
-  portfolio   Portfolio   @relation(fields: [portfolioId], references: [id])
+  id            String   @id @default(cuid())
+  buyPrice      Float
+  sellPrice     Float
+  buyQty        Int
+  sellQty       Int
+  buyerId       String
+  sellerId      String
+  buyerOrderId  String
+  sellerOrderId String
+  createdAt     DateTime @default(now())
+  orderId       String
+  Order         Order    @relation(fields: [orderId], references: [id])
 }
 
-model OTP {
-  id         String   @id @default(uuid())
-  userId     String?
-  otp        String   @unique
-  createdAt  DateTime @default(now())
-  expiresAt  DateTime
-  otpID      String   @unique
-  isVerified Boolean  @default(false)
-  user       User?    @relation(fields: [userId], references: [id])
+model Order {
+  id          String      @id
+  userId      String      @unique
+  price       Float
+  Quantity    Int
+  Side        TradeSide
+  type        OrderType
+  status      OrderStatus
+  portfolioId String?
+  Portfolio   Portfolio?  @relation(fields: [portfolioId], references: [id])
+  Trade       Trade[]
 }
 
 enum UserRole {
@@ -126,4 +72,9 @@ enum TradeStatus {
 enum OrderType {
   BUY
   SELL
+}
+
+enum OrderStatus {
+  LIVE
+  EXECUTED
 }

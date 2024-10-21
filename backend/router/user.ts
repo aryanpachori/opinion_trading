@@ -4,14 +4,15 @@ import { engineQueue, redis } from "../services/redisClient";
 
 const router = Router();
 
-router.post("/signIn", async (req, res) => {
+router.post("/signin", async (req, res) => {
   const { userId } = req.body;
+
   const responseId = createId();
-  const data = {
+  const data = JSON.stringify({
     userId,
     responseId,
     type: "userLogin",
-  };
+  });
   await engineQueue(data);
   await redis.subscribe("userLogin", (data) => {
     const parseData = JSON.parse(data);
@@ -49,13 +50,14 @@ router.post("/create", async (req, res) => {
 });
 
 router.post("/recharge", async (req, res) => {
-  const { userId, balance } = req.body;
+  const { userId, amount } = req.body;
   const responseId = createId();
-  const data = {
+  const data = JSON.stringify({
     userId,
-    balance,
+    amount,
+    responseId,
     type: "userRecharge",
-  };
+  });
   await engineQueue(data);
   await redis.subscribe("userRecharge", (data) => {
     const parseData = JSON.parse(data);
@@ -72,11 +74,11 @@ router.post("/balance", async (req, res) => {
   const { userId } = req.body;
   const responseId = createId();
 
-  const data = {
+  const data = JSON.stringify({
     userId,
     responseId,
     type: "userBalance",
-  };
+  });
   await engineQueue(data);
   await redis.subscribe("userBalance", (data) => {
     const parseData = JSON.parse(data);
