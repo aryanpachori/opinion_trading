@@ -16,7 +16,4 @@ export async function BroadcastChannel(eventId: string, data: any) {
   redis.lPush("broadcastQueue", queueData);
 }
 
-export async function BroadcastToBackend(data: any) {
-  await redis.publish("engineUpdates", data);
-}
-BroadcastToBackend("testing publish")
+

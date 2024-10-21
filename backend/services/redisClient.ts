@@ -12,5 +12,5 @@ redis.on("error", (error) => {
 });
 
 export async function engineQueue(data: any) {
-  redis.on("engineQueue", data);
+  redis.lPush("engineQueue", data);
 }

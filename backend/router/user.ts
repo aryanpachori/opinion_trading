@@ -27,11 +27,12 @@ router.post("/signIn", async (req, res) => {
 router.post("/create", async (req, res) => {
   const responseId = createId();
   const userId = createId();
-  const data = {
+  const data = JSON.stringify({
     responseId,
     userId,
     type: "userCreation",
-  };
+  });
+
   await engineQueue(data);
 
   await redis.subscribe("userCreation", (data) => {
