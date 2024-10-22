@@ -1,5 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import {
+  inMemory_OrderId,
   inMemory_trades,
   inMemoryOrderBooks,
   inr_balances,
@@ -52,7 +53,17 @@ export async function initiateOrder(
         while (tradeQty > 0 && order.UserQuantities.length > 0) {
           const userOrder = order.UserQuantities[0];
           const userTradeQty = Math.min(tradeQty, userOrder.quantity!);
-
+          if (inMemory_OrderId[userOrder.orderId!].type == "SELL") {
+            inMemory_OrderId[userOrder.orderId!].status == "EXECUTED";
+            await prisma.order.update({
+              where: {
+                id: userOrder.orderId,
+              },
+              data: {
+                status: "EXECUTED",
+              },
+            });
+          }
           const tradeId = createId();
           inMemory_trades[tradeId] = {
             eventId: eventId,
@@ -67,7 +78,7 @@ export async function initiateOrder(
           };
           await prisma.trade.create({
             data: {
-              id : tradeId,
+              id: tradeId,
               eventId: eventId,
               sellerId: userOrder.userId!,
               sellerOrderId: userOrder.orderId!,
