@@ -1,11 +1,13 @@
 import { Router } from "express";
 import {
+  inMemory_events,
   inMemory_OrderId,
   inMemoryOrderBooks,
   inr_balances,
 } from "../utils/global";
 import { initiateOrder } from "../service/intialiseOrder";
 import { exit } from "../service/exit";
+import { createId } from "@paralleldrive/cuid2";
 
 const router = Router();
 
@@ -75,5 +77,19 @@ router.post("/exit", async (req, res) => {
 //   res.json({ message: "orderbook saved in-memory" });
 //   return;
 // });
+
+router.post("/event", async (req, res) => {
+  const { title, description } = req.body;
+  if (!title || !description) {
+    res.status(401).json({ message: "invalid details" });
+  }
+  const eventId = createId();
+  inMemory_events[eventId] = {
+    title: title,
+    description: description,
+  };
+  res.json({message : "event added successfully"})
+  console.log(inMemory_events);
+});
 
 export default router;

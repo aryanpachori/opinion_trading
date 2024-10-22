@@ -63,7 +63,7 @@ router.post("/recharge", async (req, res) => {
     const parseData = JSON.parse(data);
     if (parseData.responseId == responseId && parseData.status === "SUCCESS") {
       redis.unsubscribe("userRecharge");
-      return res.json({ message: "success" });
+      return res.json(`"Total available balance :"${parseData.balance}`);
     }
     redis.unsubscribe("userRecharge");
     return res.status(401).json({ message: "user recharge failed" });

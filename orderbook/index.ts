@@ -8,6 +8,7 @@ import { initiateOrder } from "./service/intialiseOrder";
 import { exit } from "./service/exit";
 import { userCreate, userLogin } from "./service/userAuth";
 import { userBalance, userRecharge } from "./service/userBalance";
+import { getEvents } from "./service/events";
 
 const app = express();
 
@@ -39,9 +40,9 @@ async function processQueue() {
           await userBalance(message);
           break;
 
-        // case "getEvents":
-        //   await getEvents(message);
-        //   break;
+        case "getEvents":
+          await getEvents(message);
+          break;
         // case "initiateOrder":
         //   await initiateOrder(message);
         //   break;

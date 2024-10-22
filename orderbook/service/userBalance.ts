@@ -8,6 +8,7 @@ export async function userRecharge(message: any) {
     const data = JSON.stringify({
       responseId,
       status: "SUCCESS",
+      balance : inr_balances[userId].balance
     });
     console.log(inr_balances);
     redis.publish("userRecharge", data);
@@ -37,6 +38,7 @@ export async function userBalance(message: any) {
     const data = JSON.stringify({
       responseId,
       status: "FAILED",
+    
     });
     redis.publish("userBalance", data);
     return;

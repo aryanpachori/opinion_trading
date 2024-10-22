@@ -9,6 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "5.20.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",

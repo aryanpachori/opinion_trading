@@ -4,12 +4,12 @@ import { engineQueue, redis } from "../services/redisClient";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
+router.post("/", async (req, res) => {
   const responseId = createId();
-  const data = {
+  const data = JSON.stringify({
     responseId,
     type: "getEvents",
-  };
+  });
   await engineQueue(data);
   await redis.subscribe("getEvent", (data) => {
     const parseData = JSON.parse(data);
