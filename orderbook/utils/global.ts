@@ -45,7 +45,7 @@ export const inMemory_trades: { [trade_id: string]: Trades } = {};
 export const inMemory_OrderId: { [order_id: string]: OrderSchema } = {};
 export const inMemory_events: { [eventId: string]: Event } = {};
 
-const generateOrderbook = () => {
+export const generateOrderbook = () => {
   const YES = [];
   const NO = [];
 

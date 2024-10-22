@@ -1,3 +1,4 @@
+import { createId } from "@paralleldrive/cuid2";
 import {
   inMemory_trades,
   inMemoryOrderBooks,
@@ -5,20 +6,19 @@ import {
 } from "../utils/global";
 import { BroadcastChannel } from "./redisClient";
 
-
 export async function initiateOrder(
   userId: string,
   eventId: string,
-  type: "YES" | "NO",
+  side: "YES" | "NO",
   price: number,
   quantity: number,
   orderId: string
 ) {
   const orderbook = inMemoryOrderBooks[eventId];
-  const oppType = type === "YES" ? "NO" : "YES";
-  const sortedOrders = orderbook[type].sort(
+  const oppType = side === "YES" ? "NO" : "YES";
+  const sortedOrders = orderbook[side].sort(
     (a: any, b: any) => a.price - b.price
-  ); 
+  );
   const cost = price * quantity;
   inr_balances[userId].balance -= cost;
   inr_balances[userId].lockedBalance += cost;
@@ -51,7 +51,7 @@ export async function initiateOrder(
           const userOrder = order.UserQuantities[0];
           const userTradeQty = Math.min(tradeQty, userOrder.quantity!);
 
-          const tradeId = `trade_${Math.random().toString()}`;
+          const tradeId = createId();
           inMemory_trades[tradeId] = {
             eventId: eventId,
             sellerId: userOrder.userId!,
@@ -88,6 +88,6 @@ export async function initiateOrder(
     },
   };
   await BroadcastChannel(eventId, broadcastData);
-  
+
   return;
 }

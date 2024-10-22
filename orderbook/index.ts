@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 
-import orderRouter from "./router/order";
+import orderRouter, { initiateOrderRoute } from "./router/order";
 import { redis } from "./service/redisClient";
 import { initiateOrder } from "./service/intialiseOrder";
 import { exit } from "./service/exit";
@@ -43,9 +43,9 @@ async function processQueue() {
         case "getEvents":
           await getEvents(message);
           break;
-        // case "initiateOrder":
-        //   await initiateOrder(message);
-        //   break;
+        case "initiateOrder":
+          await initiateOrderRoute(message);
+          break;
 
         // case "orderExit":
         //   await exit(message);

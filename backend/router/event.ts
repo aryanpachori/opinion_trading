@@ -29,7 +29,7 @@ router.post("/initiate", async (req, res) => {
     return;
   }
   const responseId = createId();
-  const data = {
+  const data = JSON.stringify({
     userId,
     eventId,
     responseId,
@@ -37,7 +37,7 @@ router.post("/initiate", async (req, res) => {
     price,
     quantity,
     type: "initiateOrder",
-  };
+  });
   await engineQueue(data);
   await redis.subscribe("initiateOrder", (data) => {
     const parseData = JSON.parse(data);

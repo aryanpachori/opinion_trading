@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  generateOrderbook,
   inMemory_events,
   inMemory_OrderId,
   inMemoryOrderBooks,
@@ -8,25 +9,33 @@ import {
 import { initiateOrder } from "../service/intialiseOrder";
 import { exit } from "../service/exit";
 import { createId } from "@paralleldrive/cuid2";
+import { BroadcastChannel, redis } from "../service/redisClient";
 
 const router = Router();
 
-router.post("/initiate", async (req, res) => {
-  const { userId, eventId, type, price, quantity } = req.body;
-  if (!userId || !eventId || !type || !price || !quantity) {
-    res.json({ message: "invalid details" });
+export const initiateOrderRoute = async (message: any) => {
+  const { userId, eventId, side, price, quantity, responseId } = message;
+  if (
+    !userId ||
+    !eventId ||
+    !side ||
+    !price ||
+    !quantity ||
+    !responseId ||
+    inr_balances[userId].balance < price * quantity ||
+    !inMemoryOrderBooks[eventId]
+  ) {
+    const data = JSON.stringify({
+      responseId,
+      status: "FAILED",
+    });
+    redis.publish("initiateOrder", data);
     return;
   }
-  if (inr_balances[userId].balance < price * quantity) {
-    res.json({ message: "not enough balance" });
-  }
-  if (!inMemoryOrderBooks[eventId]) {
-    res.json({ message: "no orderbook found" });
-    return;
-  }
-  const orderId = `order_${Math.random().toString()}`;
+
+  const orderId = createId();
   inMemory_OrderId[orderId] = {
-    side: type,
+    side: side,
     type: "BUY",
     price: price,
     quantity: quantity,
@@ -35,10 +44,14 @@ router.post("/initiate", async (req, res) => {
   };
   console.log(inMemory_OrderId);
 
-  await initiateOrder(userId, eventId, type, price, quantity, orderId);
-  res.json({ message: "success" });
+  await initiateOrder(userId, eventId, side, price, quantity, orderId);
+  const data = JSON.stringify({
+    responseId,
+    status: "SUCCESS",
+  });
+  redis.publish("initiateOrder", data);
   return;
-});
+};
 
 router.post("/exit", async (req, res) => {
   const { userId, eventId, type, price, quantity, orderId } = req.body;
@@ -88,7 +101,16 @@ router.post("/event", async (req, res) => {
     title: title,
     description: description,
   };
-  res.json({message : "event added successfully"})
+  inMemoryOrderBooks[eventId] = generateOrderbook();
+  const orderbook = inMemoryOrderBooks[eventId];
+  const broadcastData = {
+    orderbook: {
+      yes: orderbook.YES,
+      no: orderbook.NO,
+    },
+  };
+  await BroadcastChannel(eventId, broadcastData);
+  res.json({ message: "event added successfully" });
   console.log(inMemory_events);
 });
 
