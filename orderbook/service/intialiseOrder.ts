@@ -5,7 +5,8 @@ import {
   inr_balances,
 } from "../utils/global";
 import { BroadcastChannel } from "./redisClient";
-
+import { Prisma, PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 export async function initiateOrder(
   userId: string,
   eventId: string,
@@ -39,6 +40,7 @@ export async function initiateOrder(
               quantity: remainingQty,
               orderId: orderId,
             });
+
             remainingQty = 0;
           }
         });
@@ -63,6 +65,20 @@ export async function initiateOrder(
             Buyprice: order.price,
             Sellprice: 10 - order.price,
           };
+          await prisma.trade.create({
+            data: {
+              id : tradeId,
+              eventId: eventId,
+              sellerId: userOrder.userId!,
+              sellerOrderId: userOrder.orderId!,
+              buyerOrderId: orderId,
+              buyerId: userId,
+              sellQty: userOrder.quantity!,
+              buyQty: tradeQty,
+              buyPrice: order.price,
+              sellPrice: 10 - order.price,
+            },
+          });
           console.log(inMemory_trades);
           userOrder.quantity! -= userTradeQty;
           tradeQty -= userTradeQty;

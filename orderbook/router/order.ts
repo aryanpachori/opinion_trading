@@ -10,9 +10,10 @@ import { initiateOrder } from "../service/intialiseOrder";
 import { exit } from "../service/exit";
 import { createId } from "@paralleldrive/cuid2";
 import { BroadcastChannel, redis } from "../service/redisClient";
+import { PrismaClient } from "@prisma/client";
 
 const router = Router();
-
+const prisma = new PrismaClient();
 export const initiateOrderRoute = async (message: any) => {
   const { userId, eventId, side, price, quantity, responseId } = message;
   if (
@@ -29,6 +30,7 @@ export const initiateOrderRoute = async (message: any) => {
       responseId,
       status: "FAILED",
     });
+
     redis.publish("initiateOrder", data);
     return;
   }
@@ -42,6 +44,17 @@ export const initiateOrderRoute = async (message: any) => {
     status: "LIVE",
     userId: userId,
   };
+  await prisma.order.create({
+    data: {
+      id: orderId,
+      price: price,
+      Quantity: quantity,
+      userId: userId,
+      Side: side,
+      type: "BUY",
+      status: "LIVE",
+    },
+  });
   console.log(inMemory_OrderId);
 
   await initiateOrder(userId, eventId, side, price, quantity, orderId);
@@ -53,23 +66,33 @@ export const initiateOrderRoute = async (message: any) => {
   return;
 };
 
-router.post("/exit", async (req, res) => {
-  const { userId, eventId, type, price, quantity, orderId } = req.body;
+export const exitOrder = async (message: any) => {
+  const { userId, eventId, side, price, quantity, orderId, responseId } =
+    message;
   if (
     !userId ||
     !eventId ||
-    !type ||
+    !side ||
     !price ||
     !quantity ||
-    !inMemory_OrderId[orderId]
+    !inMemory_OrderId[orderId] ||
+    !responseId
   ) {
-    res.json({ message: "Invalid details" });
+    const data = JSON.stringify({
+      responseId,
+      status: "FAILED",
+    });
+    redis.publish("orderExit", data);
     return;
   }
-  await exit(eventId, type, price, quantity, orderId, userId);
-  res.json({ message: "Order processed successfully" });
+  await exit(eventId, side, price, quantity, orderId, userId);
+  const data = JSON.stringify({
+    responseId,
+    status: "SUCCESS",
+  });
+  redis.publish("orderExit", data);
   return;
-});
+};
 
 // router.post("/incomingOrderbook", async (req, res) => {
 //   const { workerOB } = req.body;

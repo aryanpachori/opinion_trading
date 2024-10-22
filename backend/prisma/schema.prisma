@@ -16,15 +16,15 @@ model Portfolio {
 }
 
 model Order {
-  id          String      @id @default(cuid())
-  userId      String      @unique
-  price       Float
-  Quantity    Int
-  Side        TradeSide
-  type        OrderType
-  status      OrderStatus
-  trade       Trade[]
-  portfolio   Portfolio?  @relation(fields: [portfolioId], references: [id])
+  id       String      @id @default(cuid())
+  userId   String      @unique
+  price    Float
+  Quantity Int
+  Side     TradeSide
+  type     OrderType
+  status   OrderStatus
+
+  portfolio   Portfolio? @relation(fields: [portfolioId], references: [id])
   portfolioId String?
 }
 
@@ -39,8 +39,6 @@ model Trade {
   buyerOrderId  String
   sellerOrderId String
   createdAt     DateTime @default(now())
-  orderId       String
-  Order         Order    @relation(fields: [orderId], references: [id])
 }
 
 enum UserRole {

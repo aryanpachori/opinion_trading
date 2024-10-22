@@ -1,13 +1,15 @@
+import { createId } from "@paralleldrive/cuid2";
 import {
   inMemory_OrderId,
   inMemory_trades,
   inMemoryOrderBooks,
 } from "../utils/global";
 import { BroadcastChannel } from "./redisClient";
-
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 export async function exit(
   eventId: string,
-  type: "YES" | "NO",
+  side: "YES" | "NO",
   price: number,
   quantity: number,
   orderId: string,
@@ -15,7 +17,7 @@ export async function exit(
 ) {
   const sellprice = 10 - price;
   const orderbook = inMemoryOrderBooks[eventId];
-  const Oppside = type === "NO" ? "YES" : "NO";
+  const Oppside = side === "NO" ? "YES" : "NO";
 
   let totalOppQuantity = 0;
 
@@ -28,26 +30,40 @@ export async function exit(
   if (totalOppQuantity >= quantity) {
     let remainingQuantity = quantity;
 
-    orderbook[Oppside].forEach((order) => {
+    orderbook[Oppside].forEach(async (order) => {
       if (order.price === sellprice && remainingQuantity > 0) {
         for (let i = 0; i < order.UserQuantities.length; i++) {
           const userOrder = order.UserQuantities[i];
 
           if (userOrder.quantity! >= remainingQuantity) {
-            const tradeId = `trade_${Math.random().toString()}`;
+            const tradeId = createId();
 
             inMemory_trades[tradeId] = {
               eventId: eventId,
-              sellerId: userOrder.userId!,
-              sellerOrder_id: userOrder.orderId!,
-              buyerOrder_id: orderId,
+              sellerId: userId,
+              sellerOrder_id: orderId,
+              buyerOrder_id: userOrder.orderId!,
               sell_qty: remainingQuantity,
-              buyerId: userId,
+              buyerId: userOrder.userId!,
               buy_qty: remainingQuantity,
-              Buyprice: price,
-              Sellprice: sellprice,
+              Buyprice: order.price,
+              Sellprice: price,
             };
 
+            await prisma.trade.create({
+              data: {
+                id: tradeId,
+                eventId: eventId,
+                sellerId: userId,
+                sellerOrderId: orderId,
+                buyerId: userOrder.userId!,
+                buyerOrderId: userOrder.orderId!,
+                sellQty: remainingQuantity,
+                buyQty: remainingQuantity,
+                buyPrice: order.price,
+                sellPrice: price,
+              },
+            });
             userOrder.quantity! -= remainingQuantity;
             if (userOrder.quantity === 0) {
               order.UserQuantities.splice(i, 1);
@@ -58,19 +74,33 @@ export async function exit(
 
             break;
           } else {
-            const tradeId = `trade_${Math.random().toString()}`;
+            const tradeId = createId();
 
             inMemory_trades[tradeId] = {
               eventId: eventId,
-              sellerId: userOrder.userId!,
-              sellerOrder_id: userOrder.orderId!,
-              buyerOrder_id: orderId,
+              sellerId: userId,
+              sellerOrder_id: orderId,
+              buyerOrder_id: userOrder.orderId!,
               sell_qty: userOrder.quantity!,
-              buyerId: userId,
+              buyerId: userOrder.userId!,
               buy_qty: userOrder.quantity!,
-              Buyprice: price,
-              Sellprice: sellprice,
+              Buyprice: order.price,
+              Sellprice: price,
             };
+            await prisma.trade.create({
+              data: {
+                id: tradeId,
+                eventId: eventId,
+                sellerId: userId,
+                buyerId: userOrder.userId!,
+                sellerOrderId: orderId,
+                buyerOrderId: userOrder.orderId!,
+                sellPrice: price,
+                buyPrice: order.price,
+                sellQty: userOrder.quantity!,
+                buyQty: userOrder.quantity!,
+              },
+            });
 
             remainingQuantity -= userOrder.quantity!;
 
@@ -79,6 +109,14 @@ export async function exit(
           }
         }
         inMemory_OrderId[orderId].status = "EXECUTED";
+        await prisma.order.update({
+          where: {
+            id: orderId,
+          },
+          data: {
+            status: "EXECUTED",
+          },
+        });
         console.log(inMemory_OrderId[orderId]);
         order.quantity -= quantity;
       }
@@ -95,6 +133,14 @@ export async function exit(
       }
     });
     inMemory_OrderId[orderId].type = "SELL";
+    await prisma.order.update({
+      where: {
+        id: orderId,
+      },
+      data: {
+        type: "SELL",
+      },
+    });
     console.log(inMemory_OrderId[orderId]);
   }
   const broadcastData = {

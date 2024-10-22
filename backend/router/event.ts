@@ -51,17 +51,19 @@ router.post("/initiate", async (req, res) => {
 });
 
 router.post("/exit", async (req, res) => {
-  const { userId, orderId, side, price, quantity } = req.body;
+  const { eventId, userId, orderId, side, price, quantity } = req.body;
+
   const responseId = createId();
-  const data = {
+  const data = JSON.stringify({
     userId,
     orderId,
+    eventId,
     responseId,
     side,
     price,
     quantity,
     type: "orderExit",
-  };
+  });
   await engineQueue(data);
   await redis.subscribe("orderExit", (data) => {
     const parseData = JSON.parse(data);
@@ -75,3 +77,4 @@ router.post("/exit", async (req, res) => {
 });
 
 export default router;
+

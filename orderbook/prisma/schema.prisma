@@ -18,6 +18,7 @@ model Portfolio {
 model Trade {
   id            String   @id @default(cuid())
   buyPrice      Float
+  eventId       String
   sellPrice     Float
   buyQty        Int
   sellQty       Int
@@ -26,8 +27,7 @@ model Trade {
   buyerOrderId  String
   sellerOrderId String
   createdAt     DateTime @default(now())
-  orderId       String
-  Order         Order    @relation(fields: [orderId], references: [id])
+  
 }
 
 model Order {
@@ -40,7 +40,7 @@ model Order {
   status      OrderStatus
   portfolioId String?
   Portfolio   Portfolio?  @relation(fields: [portfolioId], references: [id])
-  Trade       Trade[]
+  
 }
 
 enum UserRole {
