@@ -1,8 +1,8 @@
-interface INRBalance {
+export interface INRBalance {
   balance: number;
   lockedBalance: number;
 }
-interface Trades {
+export interface Trades {
   eventId: string;
   sellerId: string;
   sell_qty: number;
@@ -13,21 +13,21 @@ interface Trades {
   sellerOrder_id: string;
   buyerOrder_id: string;
 }
-interface orderbook {
+export interface orderbook {
   YES: Order[];
   NO: Order[];
 }
-interface Order {
+export interface Order {
   price: number;
   quantity: number;
   UserQuantities: UserQuantities[];
 }
-interface UserQuantities {
+export interface UserQuantities {
   userId?: string;
   quantity?: number;
   orderId?: string;
 }
-interface OrderSchema {
+export interface OrderSchema {
   side: "YES" | "NO";
   type: "SELL" | "BUY";
   price: number;
@@ -35,7 +35,7 @@ interface OrderSchema {
   status: "LIVE" | "EXECUTED";
   userId: string;
 }
-interface Event {
+export interface Event {
   title: string;
   description: string;
 }
@@ -65,7 +65,7 @@ export const generateOrderbook = () => {
 };
 const eventId = "testevent";
 inMemoryOrderBooks[eventId] = generateOrderbook();
-console.log(inMemoryOrderBooks[eventId]);
+
 
 const users = ["user1", "user2", "user3", "user4"];
 
@@ -75,4 +75,4 @@ for (const user of users) {
     lockedBalance: 0,
   };
 }
-console.log(inr_balances);
+

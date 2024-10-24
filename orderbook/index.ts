@@ -9,6 +9,14 @@ import { exit } from "./service/exit";
 import { userCreate, userLogin } from "./service/userAuth";
 import { userBalance, userRecharge } from "./service/userBalance";
 import { getEvents } from "./service/events";
+import { loadSnapshot, saveSnapshot } from "./service/crashService";
+import {
+  inMemory_events,
+  inMemory_OrderId,
+  inMemory_trades,
+  inMemoryOrderBooks,
+  inr_balances,
+} from "./utils/global";
 
 const app = express();
 
@@ -60,3 +68,17 @@ app.listen(3002, () => {
 setInterval(() => {
   processQueue();
 }, 1000);
+
+loadSnapshot();
+setInterval(() => {
+  saveSnapshot(
+    inMemoryOrderBooks,
+    inr_balances,
+    inMemory_events,
+    inMemory_OrderId,
+    inMemory_trades
+  );
+ 
+}, 10000);
+
+console.log({ inMemoryOrderBooks, inr_balances , inMemory_OrderId});
