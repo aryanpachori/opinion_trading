@@ -23,7 +23,6 @@ model Order {
   Side     TradeSide
   type     OrderType
   status   OrderStatus
-
   portfolio   Portfolio? @relation(fields: [portfolioId], references: [id])
   portfolioId String?
 }

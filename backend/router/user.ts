@@ -84,7 +84,8 @@ router.post("/balance", async (req, res) => {
     const parseData = JSON.parse(data);
     if (parseData.responseId == responseId && parseData.status === "SUCCESS") {
       redis.unsubscribe("userBalance");
-      return res.json(`user balance: ${parseData.balance}`);
+     
+     return res.json({ balance: parseData.balance });
     }
     redis.unsubscribe("userBalance");
     return res.json("error fetching the balance");

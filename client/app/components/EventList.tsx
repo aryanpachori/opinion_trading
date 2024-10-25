@@ -51,7 +51,7 @@ export default function EventList() {
   const [events, setEvents] = useState<Event[]>();
   useEffect(() => {
     async function fetch() {
-      const evnt = await getEvents();
+      const event = "TESTEVENT"
       console.log(evnt);
 
       setEvents(evnt);

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { NavigationMenu } from "./Navmenu";
 import ProfileHeader from "./ProfileHeader";
 import { Wallet } from "lucide-react";
+import { getBalance } from "@/actions/balance/balance";
 
 interface navMenutItemType {
   title: string;
@@ -12,11 +13,13 @@ interface navMenutItemType {
 
 export default function Appbar() {
   const [balance, setBalance] = useState(0);
-
+  const userId = "zcjz751lsvz9v8ba58loaqo5";
   useEffect(() => {
-    const bal = 0;
-
-    setBalance(bal);
+    async function loadBal() {
+      const bal = await getBalance(userId);
+      setBalance(bal);
+    }
+    loadBal();
   }, []);
   const navMenutItem: Array<navMenutItemType> = [
     { title: "Events", link: "/event" },
@@ -45,7 +48,7 @@ export default function Appbar() {
           </nav>
           {/* ProfileHeader */}
           <div className="flex gap-3 items-center">
-            ]{" "}
+            {" "}
             <button className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700 hover:text-white border rounded pr-4 pf-4 pt-2 pb-2 flex items-center space-x-2">
               <Wallet className="h-5 w-5 ml-3" />
               <span className="font-mono">₹ {balance}</span>

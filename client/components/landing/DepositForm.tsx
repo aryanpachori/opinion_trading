@@ -1,13 +1,11 @@
-"use client"
-import React, { useState, useEffect } from 'react';
+"use client";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
-import { DepositeMoneyInWallet } from '@/actions/Payout/Recharge';
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
-import {Toaster, toast} from 'react-hot-toast';
+import { Toaster, toast } from "react-hot-toast";
+import { recharge } from "@/actions/recharge/recharge";
 
 const DepositForm = () => {
   const [depositAmount, setDepositAmount] = useState(0);
@@ -16,36 +14,38 @@ const DepositForm = () => {
     gst: 0,
     depositBalCredit: 0,
     promotionalBalCredit: 0,
-    netBalance: 0
+    netBalance: 0,
   });
-  const {data} = useSession();
+
   useEffect(() => {
     const rechargeAmount = depositAmount;
     const gst = -(depositAmount * 0.18).toFixed(2);
     const depositBalCredit = Number((depositAmount - Math.abs(gst)).toFixed(2));
     const promotionalBalCredit = Math.abs(gst);
     const netBalance = depositAmount;
-    
+
     setSummary({
       rechargeAmount,
       gst,
       depositBalCredit,
       promotionalBalCredit,
-      netBalance
+      netBalance,
     });
   }, [depositAmount]);
 
-  const handleQuickAdd = (amount:number) => {
-    setDepositAmount(prev => prev + amount);
+  const handleQuickAdd = (amount: number) => {
+    setDepositAmount((prev) => prev + amount);
   };
 
-  async function handleRechageClick(){
-    if(!data?.user)redirect("/api/auth/signin");
-    const userid =  data.user.id;
-    const isRechargeDone  = await DepositeMoneyInWallet(userid!, depositAmount);
-    if(isRechargeDone?.success){
+  async function handleRechageClick() {
+    const userId = "zcjz751lsvz9v8ba58loaqo5";
+    const isRechargeDone = await recharge(userId, depositAmount);
+    if (isRechargeDone?.success) {
       toast.success("Recharge Success");
-    }else{
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } else {
       toast.error("Error While Recharing");
     }
   }
@@ -54,7 +54,7 @@ const DepositForm = () => {
     <div className="mx-auto p-4 w-full flex justify-center ">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="col-span-2 px-">
-      <h1 className="text-3xl font-bold px-7 pt-5">Deposit</h1>
+          <h1 className="text-3xl font-bold px-7 pt-5">Deposit</h1>
           <CardContent className="pt-6">
             <Label htmlFor="depositAmount">Deposit amount</Label>
             <Input
@@ -65,11 +65,23 @@ const DepositForm = () => {
               className="mb-4"
             />
             <div className="flex space-x-2 mb-4">
-              <Button variant="outline" onClick={() => handleQuickAdd(250)}>+250</Button>
-              <Button variant="outline" onClick={() => handleQuickAdd(500)}>+500</Button>
-              <Button variant="outline" onClick={() => handleQuickAdd(1000)}>+1000</Button>
+              <Button variant="outline" onClick={() => handleQuickAdd(250)}>
+                +250
+              </Button>
+              <Button variant="outline" onClick={() => handleQuickAdd(500)}>
+                +500
+              </Button>
+              <Button variant="outline" onClick={() => handleQuickAdd(1000)}>
+                +1000
+              </Button>
             </div>
-            <Button className="w-full" variant="default" onClick={handleRechageClick}>Recharge</Button>
+            <Button
+              className="w-full"
+              variant="default"
+              onClick={handleRechageClick}
+            >
+              Recharge
+            </Button>
           </CardContent>
         </Card>
         <Card>
@@ -92,7 +104,9 @@ const DepositForm = () => {
               </div>
               <div className="flex justify-between">
                 <span>Promotional bal. credit</span>
-                <span className="text-green-500">+ ₹{summary.promotionalBalCredit.toFixed(2)}</span>
+                <span className="text-green-500">
+                  + ₹{summary.promotionalBalCredit.toFixed(2)}
+                </span>
               </div>
               <div className="text-sm text-green-500">🎉 Recharge Cashback</div>
               <div className="pt-2 border-t flex justify-between font-bold">
@@ -103,10 +117,7 @@ const DepositForm = () => {
           </CardContent>
         </Card>
       </div>
-      <Toaster
-          position="top-center"
-          reverseOrder={false}
-      />
+      <Toaster position="top-center" reverseOrder={false} />
     </div>
   );
 };
