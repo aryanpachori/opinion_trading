@@ -3,7 +3,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 
 import orderRouter, { exitOrder, initiateOrderRoute } from "./router/order";
-import { redis } from "./service/redisClient";
+import { redis} from "./service/redisClient";
 import { initiateOrder } from "./service/intialiseOrder";
 import { exit } from "./service/exit";
 import { userCreate, userLogin } from "./service/userAuth";

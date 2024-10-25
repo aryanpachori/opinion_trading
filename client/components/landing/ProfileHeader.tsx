@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 
 const ProfileHeader = () => {
   const { data } = useSession();
-  console.log("data in profileHeader", data)
+  
   return (
     <div className="flex items-center gap-4">
       <Link href={!data?.user ? "/api/auth/signin" : "/event"}>

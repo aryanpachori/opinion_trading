@@ -15,5 +15,3 @@ export async function BroadcastChannel(eventId: string, data: any) {
   const queueData = JSON.stringify({ eventId, data });
   redis.lPush("broadcastQueue", queueData);
 }
-
-

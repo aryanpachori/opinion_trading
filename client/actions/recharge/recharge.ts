@@ -1,4 +1,4 @@
-"use server";
+"use server"
 import axios from "axios";
 
 export async function recharge(userId: string, depositAmount: number) {
