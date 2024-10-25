@@ -4,16 +4,9 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
+import { Trade } from "@/app/(lobby)/portfolio/page";
 
-interface Trade {
-  id: string;
-  title: string;
-  price: number;
-  quantity: number;
-  type: "YES" | "NO";
-  gainloss: number | null;
-  status: "ACTIVE" | "PAST";
-}
+
 interface PortfolioProps {
   currentReturns: number;
   trades: Trade[];
@@ -24,8 +17,8 @@ export default function Portfolio({
   trades,
   onExit,
 }: PortfolioProps) {
-  const activeTrades = trades.filter((trade) => trade.status == "ACTIVE");
-  const pastTrades = trades.filter((trade) => trade.status == "PAST");
+  const activeTrades = trades.filter((trade) => trade.status == "LIVE" && trade.type == 'BUY');
+  const pastTrades = trades.filter((trade) => trade.status == "EXECUTED" && trade.type == 'SELL');
 
   return (
     <div className="min-h-screen bg-black text-white p-4">
@@ -61,17 +54,17 @@ export default function Portfolio({
                       <div className="flex justify-between items-center">
                         <div>
                           <h3 className="font-semibold text-lg mb-2">
-                            {trade.title}
+                            {trade.userId}
                           </h3>
                           <p className="text-sm text-gray-400">
                             Price: ₹{trade.price.toFixed(2)} | Quantity:{" "}
-                            {trade.quantity}
+                            {trade.Quantity}
                           </p>
                         </div>
                         <div className="flex items-center space-x-4">
                           <span
                             className={`text-sm font-medium px-2 py-1 rounded ${
-                              trade.type === "YES"
+                              trade.Side === "YES"
                                 ? "bg-blue-500 text-white"
                                 : "bg-red-500 text-white"
                             }`}
@@ -110,28 +103,28 @@ export default function Portfolio({
                       <div className="flex justify-between items-center">
                         <div>
                           <h3 className="font-semibold text-lg mb-2">
-                            {trade.title}
+                            {trade.userId}
                           </h3>
                           <p className="text-sm text-gray-400">
                             Price: ₹{trade.price.toFixed(2)} | Quantity:{" "}
-                            {trade.quantity}
+                            {trade.Quantity}
                           </p>
                           <p
-                            className={`text-sm font-semibold ${trade.gainloss !== null && trade.gainloss >= 0 ? "text-green-500" : "text-red-500"}`}
+                            className={`text-sm font-semibold ${trade.price !== null && trade.price >= 0 ? "text-green-500" : "text-red-500"}`}
                           >
                             Gain/Loss:{" "}
-                            {trade.gainloss !== null
-                              ? trade.gainloss >= 0
+                            {trade.price !== null
+                              ? trade.price >= 0
                                 ? "+"
                                 : "-"
                               : ""}
-                            ₹{Math.abs(trade.gainloss || 0).toFixed(2)}
+                            ₹{Math.abs(trade.price || 0).toFixed(2)}
                           </p>
                         </div>
                         <div className="flex items-center space-x-4">
                           <span
                             className={`text-sm font-medium px-2 py-1 rounded ${
-                              trade.type === "YES"
+                              trade.Side === "YES"
                                 ? "bg-blue-500 text-white"
                                 : "bg-red-500 text-white"
                             }`}

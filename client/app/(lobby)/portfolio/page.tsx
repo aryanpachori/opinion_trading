@@ -1,42 +1,27 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
 
 import Portfolio from "../../../components/landing/Portfolio";
 
-import axios from "axios";
-import { toast, Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { getOrders } from "@/actions/portfolio/portfolio";
 
 export interface Trade {
   id: string;
-  createdAt: Date;
-  portfolioId: string;
-  eventId: string;
-  price: number;
-  quantity: number;
-  side: "YES" | "NO";
-  title?: string;
-  gainloss: number | null;
-  status: "ACTIVE" | "PAST";
-}
-export interface Portfolio {
-  id: string;
   userId: string;
-  currentBalances: number;
-  createdAt: Date;
-  updatedAt: Date;
-  trades: Trade[];
+  price: number;
+  Quantity: number;
+  Side: "YES" | "NO";
+  type: "BUY" | "SELL";
+  status: "EXECUTED" | "LIVE";
 }
+
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [portfolioData, setPortfolioData] = useState<Portfolio | null>(null);
-  const [tradesWithTitles, setTradesWithTitles] = useState<Trade[]>([]);
+  const [portfolioData, setPortfolioData] = useState<Trade[]>([]);
 
-  const { data } = useSession();
-  console.log(data?.user);
-
-  const userId = "";
+  const userId = "zcjz751lsvz9v8ba58loaqo5";
 
   useEffect(() => {
     if (userId) {
@@ -44,19 +29,13 @@ const Page = () => {
     }
   }, []);
 
-  const { status } = useSession();
-
   const getPortfolioDetails = useCallback(async (userId: string) => {
     setLoading(true);
     try {
-      const portfolio = ""
+      const portfolio = await getOrders(userId);
       console.log("portfolio", portfolio);
 
       setPortfolioData(portfolio);
-      if (portfolio) {
-        const updatedTrades = await fetchTitles(portfolio.trades);
-        setTradesWithTitles(updatedTrades);
-      }
     } catch (e) {
       console.log("Error fetching portfolio", e);
     } finally {
@@ -64,63 +43,25 @@ const Page = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      redirect("/api/auth/signin");
-    }
-    if (status === "authenticated" && userId) {
-      getPortfolioDetails(userId);
-    }
-  }, [status, userId, getPortfolioDetails]);
-
- 
-  const handleExit = async (tradeId: string) => {
-    if (window.confirm("Are you sure you want to sell your order")) {
-      try {
-        const tradeToSell = tradesWithTitles.find(
-          (trade) => trade.id == tradeId
-        );
-        if (tradeToSell) {
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_PREFIX_URL}/v1/order/sell-order`,
-            {
-              tradeId: tradeToSell.id,
-              eventId: tradeToSell.eventId,
-              price: tradeToSell.price,
-              quantity: tradeToSell.quantity,
-              side: tradeToSell.side == "YES" ? "yes" : "no",
-            }
-          );
-          toast.success(response.data.message || "Order sold successfully!");
-        } else {
-          toast.error("Trade not found.");
-        }
-      } catch (error) {
-        console.error("Error selling order", error);
-        toast.error("Failed to sell order.");
-      }
-    }
-  };
   if (loading) {
     return <div>Loading...</div>;
   }
   if (!portfolioData) {
     return <div>No portfolio found.</div>;
   }
-  const { currentBalances } = portfolioData;
 
   return (
     <div className="w-full h-screen">
       <Portfolio
-        currentReturns={currentBalances}
-        onExit={handleExit}
-        trades={tradesWithTitles.map((trade) => ({
-          id: trade.id,
-          title: trade.title || "Unknown Title",
+        currentReturns={0}
+        onExit={() => {}}
+        trades={portfolioData.map((trade) => ({
+          id: trade.userId,
+          userId: trade.userId,
           price: trade.price,
-          quantity: trade.quantity,
-          type: trade.side,
-          gainloss: trade.gainloss,
+          Quantity: trade.Quantity,
+          Side: trade.Side,
+          type: trade.type,
           status: trade.status,
         }))}
       />

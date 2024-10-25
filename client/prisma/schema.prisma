@@ -16,20 +16,21 @@ model Portfolio {
 }
 
 model Order {
-  id       String      @id @default(cuid())
-  userId   String      @unique
-  price    Float
-  Quantity Int
-  Side     TradeSide
-  type     OrderType
-  status   OrderStatus
-  portfolio   Portfolio? @relation(fields: [portfolioId], references: [id])
+  id          String      @id @default(cuid())
+  userId      String
+  price       Float
+  Quantity    Int
+  Side        TradeSide
+  type        OrderType
+  status      OrderStatus
   portfolioId String?
+  portfolio   Portfolio?  @relation(fields: [portfolioId], references: [id])
 }
 
 model Trade {
   id            String   @id @default(cuid())
   buyPrice      Float
+  eventId       String
   sellPrice     Float
   buyQty        Int
   sellQty       Int

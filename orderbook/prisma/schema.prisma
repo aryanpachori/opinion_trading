@@ -32,7 +32,7 @@ model Trade {
 
 model Order {
   id          String      @id
-  userId      String      @unique
+  userId      String      
   price       Float
   Quantity    Int
   Side        TradeSide
