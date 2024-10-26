@@ -13,5 +13,6 @@ export async function getBalance(userId: string) {
     return balance;
   } else {
     throw new Error("Balance not found");
+    return 
   }
 }

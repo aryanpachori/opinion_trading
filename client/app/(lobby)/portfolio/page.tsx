@@ -1,6 +1,6 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+
 
 import Portfolio from "../../../components/landing/Portfolio";
 

@@ -3,7 +3,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 
 import orderRouter, { exitOrder, initiateOrderRoute } from "./router/order";
-import { redis} from "./service/redisClient";
+import { redis, redis2 } from "./service/redisClient";
 import { initiateOrder } from "./service/intialiseOrder";
 import { exit } from "./service/exit";
 import { userCreate, userLogin } from "./service/userAuth";
@@ -25,40 +25,41 @@ app.use(bodyParser.json());
 app.use("/v1/worker", orderRouter);
 async function processQueue() {
   while (true) {
-    const data = await redis.rPop("engineQueue");
-    if (data) {
-      const message = JSON.parse(data);
-      console.log(message);
-      const { type } = message;
+    const data = await redis2.brpop("engineQueue", 0);
+    if (!data) continue;
+    console.log(data);
 
-      switch (type) {
-        case "userCreation":
-          await userCreate(message);
-          break;
+    const message = JSON.parse(data[1]);
+    console.log(message);
+    const { type } = message;
 
-        case "userLogin":
-          await userLogin(message);
-          break;
+    switch (type) {
+      case "userCreation":
+        await userCreate(message);
+        break;
 
-        case "userRecharge":
-          await userRecharge(message);
-          break;
+      case "userLogin":
+        await userLogin(message);
+        break;
 
-        case "userBalance":
-          await userBalance(message);
-          break;
+      case "userRecharge":
+        await userRecharge(message);
+        break;
 
-        case "getEvents":
-          await getEvents(message);
-          break;
-        case "initiateOrder":
-          await initiateOrderRoute(message);
-          break;
+      case "userBalance":
+        await userBalance(message);
+        break;
 
-        case "orderExit":
-          await exitOrder(message);
-          break;
-      }
+      case "getEvents":
+        await getEvents(message);
+        break;
+      case "initiateOrder":
+        await initiateOrderRoute(message);
+        break;
+
+      case "orderExit":
+        await exitOrder(message);
+        break;
     }
   }
 }
@@ -78,7 +79,6 @@ setInterval(() => {
     inMemory_OrderId,
     inMemory_trades
   );
- 
 }, 10000);
 
-console.log({ inMemoryOrderBooks, inr_balances , inMemory_OrderId});
+console.log({ inMemoryOrderBooks, inr_balances, inMemory_OrderId });

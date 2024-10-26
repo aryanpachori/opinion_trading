@@ -5,8 +5,11 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Toaster, toast } from "react-hot-toast";
-import { recharge } from "@/actions/recharge/recharge";
-
+// import { recharge } from "@/actions/recharge/recharge";
+// import { createOrder } from "@/actions/balance/order";
+import axios from "axios";
+import dotenv from "dotenv"
+dotenv.config()
 const DepositForm = () => {
   const [depositAmount, setDepositAmount] = useState(0);
   const [summary, setSummary] = useState({
@@ -39,8 +42,19 @@ const DepositForm = () => {
 
   async function handleRechageClick() {
     const userId = "zcjz751lsvz9v8ba58loaqo5";
-    const isRechargeDone = await recharge(userId, depositAmount);
-    if (isRechargeDone?.success) {
+    //  const orderId = await createOrder(depositAmount , userId)
+
+    //console.log(orderId);
+
+   
+    const isRechargeDone = await axios.post(
+      ` http://localhost:3000/v1/user/recharge`,
+      {
+        userId,
+        amount: depositAmount,
+      }
+    );
+    if (isRechargeDone.status == 200) {
       toast.success("Recharge Success");
       setTimeout(() => {
         window.location.reload();

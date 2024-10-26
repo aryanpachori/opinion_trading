@@ -1,5 +1,5 @@
 "use client";
-import axios from "axios";
+//import axios from "axios";
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -13,17 +13,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import LineChart from "../ui/line-chart";
-import { getEventDetails } from "@/actions/Event/getEventDetails";
+
 import { ArrowUpDown } from "lucide-react";
 
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 
-import { toast, Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 
 interface OrderBookItem {
-  id: string;
-  createdAt: Date;
-  orderBookId: string;
   price: number;
   quantity: number;
 }
@@ -31,14 +29,10 @@ interface OrderBookItem {
 interface OrderBookData {
   yes: OrderBookItem[];
   no: OrderBookItem[];
-  topPriceYes: number;
-  topPriceNo: number;
 }
 
 interface WebSocketData {
   orderbook: OrderBookData;
-  topPriceYes: number;
-  topPriceNo: number;
 }
 
 interface OrderBookProps {
@@ -46,7 +40,7 @@ interface OrderBookProps {
 }
 
 export default function OrderBook({ eventId }: OrderBookProps) {
-  const { data } = useSession();
+  // const { data } = useSession();
   const [orderBookData, setOrderBookData] = useState<OrderBookData | null>(
     null
   );
@@ -60,31 +54,25 @@ export default function OrderBook({ eventId }: OrderBookProps) {
   const [timeSeries, setTimeSeries] = useState<string[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [side, setSide] = useState<"yes" | "no">("yes");
+  const [side, setSide] = useState<"YES" | "NO">("YES");
   const [tradePrice, setTradePrice] = useState("");
   const [tradeQuantity, setTradeQuantity] = useState("");
-
+  const userId = "zcjz751lsvz9v8ba58loaqo5";
   useEffect(() => {
-    async function fetchInitialData() {
-      const eventData = await getEventDetails(eventId);
-      setTitle(eventData.title);
-      setDescription(eventData.description);
-    }
-    fetchInitialData();
-  }, [eventId]);
-
-  useEffect(() => {
+    setTitle("test");
+    setDescription("");
     const ws = new WebSocket("ws://localhost:8080");
     ws.onopen = () => {
       ws.send(JSON.stringify({ eventId }));
     };
     ws.onmessage = (event: MessageEvent) => {
       const data: WebSocketData = JSON.parse(event.data);
+      console.log(data);
       setOrderBookData(data.orderbook);
-      setYesPrice(data.orderbook.topPriceYes);
-      setNoPrice(data.orderbook.topPriceNo);
-      const newYesProb = (data.orderbook.topPriceYes / 10) * 100;
-      const newNoProb = (data.orderbook.topPriceNo / 10) * 100;
+      setYesPrice(0);
+      setNoPrice(0);
+      const newYesProb = (0 / 10) * 100;
+      const newNoProb = (0 / 10) * 100;
       setYesProbability((prev) => [...prev, newYesProb]);
       setNoProbability((prev) => [...prev, newNoProb]);
       setTimeSeries((prev) => [...prev, new Date().toLocaleTimeString()]);
@@ -100,13 +88,13 @@ export default function OrderBook({ eventId }: OrderBookProps) {
   };
   async function handleTrade() {
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_PREFIX_URL}/v1/order/place-order`,
+      `http://localhost:3000/v1/event/initiate`,
       {
-        userId: data?.user.id,
+        userId,
         eventId: eventId,
         side: side,
-        quantity: tradeQuantity,
-        price: tradePrice,
+        quantity: Number(tradeQuantity),
+        price: Number(tradePrice),
       }
     );
     if (response.status === 200) {
@@ -141,14 +129,10 @@ export default function OrderBook({ eventId }: OrderBookProps) {
               <TableBody>
                 {orderBookData && orderBookData.yes && orderBookData.no ? (
                   (() => {
-                    const yesItems = orderBookData.yes
-                      .filter((item) => item.price >= orderBookData.topPriceYes)
-                      .sort((a, b) => a.price - b.price)
-                      .slice(0, 5);
-                    const noItems = orderBookData.no
-                      .filter((item) => item.price >= orderBookData.topPriceNo)
-                      .sort((a, b) => a.price - b.price)
-                      .slice(0, 5);
+                    const yesItems = orderBookData.yes;
+
+                    const noItems = orderBookData.no;
+
                     const maxYesQuantity = Math.max(
                       ...yesItems.map((item) => item.quantity)
                     );
@@ -227,19 +211,19 @@ export default function OrderBook({ eventId }: OrderBookProps) {
           <CardContent>
             <div className="flex justify-between mb-4">
               <Button
-                variant={side === "yes" ? "default" : "outline"}
-                onClick={() => setSide("yes")}
+                variant={side === "YES" ? "default" : "outline"}
+                onClick={() => setSide("YES")}
                 className={`bg-blue-500 text-white hover:bg-blue-600 ${
-                  side === "yes" ? "ring-2 ring-blue-400" : ""
+                  side === "YES" ? "ring-2 ring-blue-400" : ""
                 }`}
               >
                 Yes ₹{yesPrice}
               </Button>
               <Button
-                variant={side === "no" ? "default" : "outline"}
-                onClick={() => setSide("no")}
+                variant={side === "NO" ? "default" : "outline"}
+                onClick={() => setSide("NO")}
                 className={`bg-red-500 text-white hover:bg-red-600 ${
-                  side === "no" ? "ring-2 ring-red-400" : ""
+                  side === "NO" ? "ring-2 ring-red-400" : ""
                 }`}
               >
                 No ₹{noPrice}
@@ -292,7 +276,7 @@ export default function OrderBook({ eventId }: OrderBookProps) {
               <Button
                 onClick={handleTrade}
                 className={`w-full text-white ${
-                  side === "yes"
+                  side === "YES"
                     ? "bg-blue-500 hover:bg-blue-600"
                     : "bg-red-500 hover:bg-red-600"
                 }`}

@@ -5,8 +5,8 @@ import { useSession } from "next-auth/react";
 import { Button } from "../ui/button";
 
 export function Hero() {
-    const { data } = useSession();
-    console.log(data?.user)
+    // const { data } = useSession();
+    // console.log(data?.user)
   return (
     <section>
       <div className="relative max-w-6xl px-4 mx-auto sm:px-6">
