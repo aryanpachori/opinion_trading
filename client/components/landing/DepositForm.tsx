@@ -8,8 +8,8 @@ import { Toaster, toast } from "react-hot-toast";
 // import { recharge } from "@/actions/recharge/recharge";
 // import { createOrder } from "@/actions/balance/order";
 import axios from "axios";
-import dotenv from "dotenv"
-dotenv.config()
+import dotenv from "dotenv";
+dotenv.config();
 const DepositForm = () => {
   const [depositAmount, setDepositAmount] = useState(0);
   const [summary, setSummary] = useState({
@@ -45,8 +45,11 @@ const DepositForm = () => {
     //  const orderId = await createOrder(depositAmount , userId)
 
     //console.log(orderId);
+    if (depositAmount <= 0) {
+      toast.error("amount should be greater than zero");
+      return;
+    }
 
-   
     const isRechargeDone = await axios.post(
       ` http://localhost:3000/v1/user/recharge`,
       {

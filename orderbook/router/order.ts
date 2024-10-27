@@ -43,7 +43,7 @@ export const initiateOrderRoute = async (message: any) => {
     quantity: quantity,
     status: "LIVE",
     userId: userId,
-    eventId : eventId
+    eventId: eventId,
   };
   await prisma.order.create({
     data: {
@@ -54,7 +54,7 @@ export const initiateOrderRoute = async (message: any) => {
       Side: side,
       type: "BUY",
       status: "LIVE",
-      eventId : eventId
+      eventId: eventId,
     },
   });
   console.log(inMemory_OrderId);
@@ -126,6 +126,13 @@ router.post("/event", async (req, res) => {
     title: title,
     description: description,
   };
+  await prisma.event.create({
+    data: {
+      id: eventId,
+      title: title,
+      description: description,
+    },
+  });
   inMemoryOrderBooks[eventId] = generateOrderbook();
   const orderbook = inMemoryOrderBooks[eventId];
   const broadcastData = {

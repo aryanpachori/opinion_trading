@@ -16,6 +16,7 @@ export interface Trade {
   type: "BUY" | "SELL";
   status: "EXECUTED" | "LIVE";
   eventId: string;
+  title?: string;
 }
 
 const Page = () => {
@@ -84,6 +85,7 @@ const Page = () => {
           type: trade.type,
           status: trade.status,
           eventId: trade.eventId,
+          title: trade.title,
         }))}
       />
       <Toaster position="top-center" />

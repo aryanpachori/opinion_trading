@@ -7,14 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Portfolio {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  currentBalances Float    @default(0.0)
-  createdAt       DateTime @default(now())
-  Order           Order[]
-}
-
 model Trade {
   id            String   @id @default(cuid())
   buyPrice      Float
@@ -30,16 +22,25 @@ model Trade {
 }
 
 model Order {
-  id          String      @id
-  userId      String
-  price       Float
-  Quantity    Int
-  eventId     String
-  Side        TradeSide
-  type        OrderType
-  status      OrderStatus
-  portfolioId String?
-  Portfolio   Portfolio?  @relation(fields: [portfolioId], references: [id])
+  id       String      @id
+  userId   String
+  price    Float
+  Quantity Int
+  eventId  String
+  Side     TradeSide
+  type     OrderType
+  status   OrderStatus
+}
+
+model Event {
+  id          String @id
+  title       String
+  description String
+}
+
+model User {
+  id    String @id
+  email String
 }
 
 enum UserRole {

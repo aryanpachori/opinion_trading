@@ -93,7 +93,7 @@ export default function Portfolio({
                         <div className="flex justify-between items-center">
                           <div>
                             <h3 className="font-semibold text-lg mb-2">
-                              {trade.id}
+                              {trade.title}
                             </h3>
                             <p className="text-sm text-gray-400">
                               Price: ₹{trade.price.toFixed(2)} | Quantity:{" "}
@@ -138,7 +138,7 @@ export default function Portfolio({
                         <div className="flex justify-between items-center">
                           <div>
                             <h3 className="font-semibold text-lg mb-2">
-                              {trade.id}
+                              {trade.title}
                             </h3>
                             <p className="text-sm text-gray-400">
                               Price: ₹{trade.price.toFixed(2)} | Quantity:{" "}
@@ -197,7 +197,7 @@ export default function Portfolio({
                         <div className="flex justify-between items-center">
                           <div>
                             <h3 className="font-semibold text-lg mb-2">
-                              {trade.id}
+                              {trade.title}
                             </h3>
                             <p className="text-sm text-gray-400">
                               Price: ₹{trade.price.toFixed(2)} | Quantity:{" "}
@@ -205,7 +205,7 @@ export default function Portfolio({
                             </p>
                           </div>
                           <div className="flex items-center space-x-4">
-                            <span
+                          <span
                               className={`text-sm font-medium px-2 py-1 rounded ${
                                 trade.Side === "YES"
                                   ? "bg-blue-500 text-white"
@@ -217,11 +217,11 @@ export default function Portfolio({
                             <span
                               className={`text-sm font-medium px-2 py-1 rounded ${
                                 trade.type === "BUY"
-                                  ? "bg-green-500 text-white"
-                                  : "bg-red-500 text-white"
+                                  ? "bg-red-500 text-white"
+                                  : "bg-green-500 text-white"
                               }`}
                             >
-                              {trade.type.toUpperCase()}
+                              {trade.type.toUpperCase() == "BUY" ? "SELL" : "BUY"}
                             </span>
                           </div>
                         </div>
@@ -238,7 +238,7 @@ export default function Portfolio({
                         <div className="flex justify-between items-center">
                           <div>
                             <h3 className="font-semibold text-lg mb-2">
-                              {trade.id}
+                              {trade.title}
                             </h3>
 
                             <p className="text-sm text-gray-400 ">
@@ -247,7 +247,7 @@ export default function Portfolio({
                             </p>
                           </div>
                           <div className="flex items-center space-x-4">
-                            <span
+                          <span
                               className={`text-sm font-medium px-2 py-1 rounded ${
                                 trade.Side === "YES"
                                   ? "bg-blue-500 text-white"
@@ -259,12 +259,13 @@ export default function Portfolio({
                             <span
                               className={`text-sm font-medium px-2 py-1 rounded p-2  ${
                                 trade.type === "BUY"
-                                  ? "bg-green-500 text-white"
-                                  : "bg-red-500 text-white"
+                                  ? "bg-red-500 text-white"
+                                  : "bg-green-500 text-white"
                               }`}
                             >
-                              {trade.type.toUpperCase()}
+                              {trade.type.toUpperCase() == "BUY" ? "SELL" : "BUY"}
                             </span>
+                            
                           </div>
                         </div>
                       </CardContent>
