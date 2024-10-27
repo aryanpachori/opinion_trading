@@ -45,31 +45,28 @@ const Page = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className=" justify-center text-xl font-bold">Loading...</div>;
   }
   if (!portfolioData) {
     return <div>No portfolio found.</div>;
   }
   async function handleExit(trade: Trade) {
     const { id, price, Quantity, eventId, Side, userId } = trade;
-    const response = await axios.post(
-      "http://localhost:3000/v1/event/exit",
-      {
-        userId,
-        eventId,
-        orderId: id,
-        side : Side,
-        price,
-        quantity :Quantity,
-      }
-    );
-    if(response.status === 200){
+    const response = await axios.post("http://localhost:3000/v1/event/exit", {
+      userId,
+      eventId,
+      orderId: id,
+      side: Side,
+      price,
+      quantity: Quantity,
+    });
+    if (response.status === 200) {
       toast.success("Order processed succesfully");
       setTimeout(() => {
         window.location.reload();
       }, 1000);
-    }else{
-      toast.error("Error processing order")
+    } else {
+      toast.error("Error processing order");
     }
   }
 

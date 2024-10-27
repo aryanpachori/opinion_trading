@@ -8,7 +8,7 @@ import { initiateOrder } from "./service/intialiseOrder";
 import { exit } from "./service/exit";
 import { userCreate, userLogin } from "./service/userAuth";
 import { userBalance, userRecharge } from "./service/userBalance";
-import { getEvents } from "./service/events";
+import { fetchEvent, getEvents } from "./service/events";
 import { loadSnapshot, saveSnapshot } from "./service/crashService";
 import {
   inMemory_events,
@@ -60,6 +60,11 @@ async function processQueue() {
       case "orderExit":
         await exitOrder(message);
         break;
+
+      case "eventdetails":
+        await fetchEvent(message)  ;
+        break;
+
     }
   }
 }

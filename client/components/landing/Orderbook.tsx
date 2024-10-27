@@ -59,8 +59,18 @@ export default function OrderBook({ eventId }: OrderBookProps) {
   const [tradeQuantity, setTradeQuantity] = useState("");
   const userId = "ffdmpaw1n3772yei1pc8icqm";
   useEffect(() => {
-    setTitle("test");
-    setDescription("");
+    async function eventDetails() {
+      const response = await axios.post(
+        "http://localhost:3000/v1/event/getEvent",
+        {
+          eventId,
+        }
+      );
+      setTitle(response.data.title);
+      setDescription(response.data.description);
+    }
+    eventDetails();
+
     const ws = new WebSocket("ws://localhost:8080");
     ws.onopen = () => {
       ws.send(JSON.stringify({ eventId }));

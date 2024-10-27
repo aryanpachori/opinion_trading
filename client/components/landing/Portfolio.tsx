@@ -187,7 +187,7 @@ export default function Portfolio({
             <div>
               <h3 className="text-xl font-semibold mb-4">Pending Orders</h3>
               <div className="space-y-4">
-                {pendingBuy.length > 0 ? (
+                {pendingBuy.length > 0 &&
                   pendingBuy.map((trade) => (
                     <Card
                       key={trade.id}
@@ -227,12 +227,7 @@ export default function Portfolio({
                         </div>
                       </CardContent>
                     </Card>
-                  ))
-                ) : (
-                  <p className="text-gray-400 text-center">
-                    No pending buy trades.
-                  </p>
-                )}
+                  ))}
                 {pendingSell.length > 0 ? (
                   pendingSell.map((trade) => (
                     <Card
@@ -263,7 +258,7 @@ export default function Portfolio({
                             </span>
                             <span
                               className={`text-sm font-medium px-2 py-1 rounded p-2  ${
-                                trade.type === 'BUY'
+                                trade.type === "BUY"
                                   ? "bg-green-500 text-white"
                                   : "bg-red-500 text-white"
                               }`}

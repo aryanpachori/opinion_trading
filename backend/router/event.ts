@@ -76,5 +76,24 @@ router.post("/exit", async (req, res) => {
   });
 });
 
-export default router;
+router.post("/getEvent", async (req, res) => {
+  const { eventId } = req.body;
+  const responseId = createId();
+  const data = JSON.stringify({
+    eventId,
+    responseId,
+    type :"eventdetails"
+  });
+  await engineQueue(data);
+  redis.subscribe("eventdetails", (data) => {
+    const parseData = JSON.parse(data);
+    if (parseData.responseId == responseId && parseData.status == "SUCCESS") {
+      redis.unsubscribe("eventdetails");
+      return res.json(parseData.event);
+    }
+    redis.unsubscribe("eventdetails");
+    return res.json({ message: "error fetching event details" });
+  });
+});
 
+export default router;

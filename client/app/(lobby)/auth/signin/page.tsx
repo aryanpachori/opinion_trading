@@ -4,7 +4,12 @@ import { Login } from '../../../../components/landing/Singin';
 
 const Page = () => {
   return (
-    <Login/>
+    <div>
+      hi
+<Login/>
+    </div>
+    
+   
   );
 };
 
