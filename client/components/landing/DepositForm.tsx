@@ -41,7 +41,7 @@ const DepositForm = () => {
   };
 
   async function handleRechageClick() {
-    const userId = "ffdmpaw1n3772yei1pc8icqm";
+    const userId = "lugw5s43fmocccb3e4b8b46d";
     //  const orderId = await createOrder(depositAmount , userId)
 
     //console.log(orderId);
@@ -51,7 +51,7 @@ const DepositForm = () => {
     }
 
     const isRechargeDone = await axios.post(
-      ` http://localhost:3000/v1/user/recharge`,
+      ` ${process.env.NEXT_PUBLIC_API_URL}/user/recharge`,
       {
         userId,
         amount: depositAmount,

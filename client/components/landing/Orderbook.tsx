@@ -57,11 +57,11 @@ export default function OrderBook({ eventId }: OrderBookProps) {
   const [side, setSide] = useState<"YES" | "NO">("YES");
   const [tradePrice, setTradePrice] = useState("");
   const [tradeQuantity, setTradeQuantity] = useState("");
-  const userId = "ffdmpaw1n3772yei1pc8icqm";
+  const userId = "lugw5s43fmocccb3e4b8b46d";
   useEffect(() => {
     async function eventDetails() {
       const response = await axios.post(
-        "http://localhost:3000/v1/event/getEvent",
+        `${process.env.NEXT_PUBLIC_API_URL}/event/getEvent`,
         {
           eventId,
         }
@@ -98,7 +98,7 @@ export default function OrderBook({ eventId }: OrderBookProps) {
   };
   async function handleTrade() {
     const response = await axios.post(
-      `http://localhost:3000/v1/event/initiate`,
+      `${process.env.NEXT_PUBLIC_API_URL}/event/initiate`,
       {
         userId,
         eventId: eventId,

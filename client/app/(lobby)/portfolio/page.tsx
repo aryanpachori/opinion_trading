@@ -23,7 +23,7 @@ const Page = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [portfolioData, setPortfolioData] = useState<Trade[]>([]);
 
-  const userId = "ffdmpaw1n3772yei1pc8icqm";
+  const userId = "lugw5s43fmocccb3e4b8b46d";
 
   useEffect(() => {
     if (userId) {
@@ -53,7 +53,7 @@ const Page = () => {
   }
   async function handleExit(trade: Trade) {
     const { id, price, Quantity, eventId, Side, userId } = trade;
-    const response = await axios.post("http://localhost:3000/v1/event/exit", {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/event/exit`, {
       userId,
       eventId,
       orderId: id,

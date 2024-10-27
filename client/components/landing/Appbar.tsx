@@ -13,7 +13,7 @@ interface navMenutItemType {
 
 export default function Appbar() {
   const [balance, setBalance] = useState(0);
-  const userId = "ffdmpaw1n3772yei1pc8icqm";
+  const userId = "lugw5s43fmocccb3e4b8b46d";
   useEffect(() => {
     async function loadBal() {
       const bal = await getBalance(userId);

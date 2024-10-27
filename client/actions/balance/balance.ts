@@ -1,7 +1,7 @@
 "use server"
 import axios from "axios";
 export async function getBalance(userId: string) {
-  const response = await axios.post(`${process.env.BACKEND_URL!}/user/balance`, {
+  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/balance`, {
     userId,
   });
   
