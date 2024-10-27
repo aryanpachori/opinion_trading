@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link";
 import ReactWrapBalancer from "react-wrap-balancer";
-import { useSession } from "next-auth/react";
+//import { useSession } from "next-auth/react";
 import { Button } from "../ui/button";
 
 export function Hero() {

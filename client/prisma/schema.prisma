@@ -20,6 +20,7 @@ model Order {
   userId      String
   price       Float
   Quantity    Int
+  eventId    String
   Side        TradeSide
   type        OrderType
   status      OrderStatus

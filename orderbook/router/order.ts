@@ -43,6 +43,7 @@ export const initiateOrderRoute = async (message: any) => {
     quantity: quantity,
     status: "LIVE",
     userId: userId,
+    eventId : eventId
   };
   await prisma.order.create({
     data: {
@@ -53,6 +54,7 @@ export const initiateOrderRoute = async (message: any) => {
       Side: side,
       type: "BUY",
       status: "LIVE",
+      eventId : eventId
     },
   });
   console.log(inMemory_OrderId);

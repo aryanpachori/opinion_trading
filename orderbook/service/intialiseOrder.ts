@@ -30,7 +30,7 @@ export async function initiateOrder(
   for (let order of sortedOrders) {
     if (order.price <= price && remainingQty > 0) {
       if (order.price === price && order.quantity === 0) {
-        orderbook[oppType].forEach((oppOrder: any) => {
+        orderbook[oppType].forEach(async (oppOrder: any) => {
           if (oppOrder.price === 10 - price) {
             oppOrder.quantity += remainingQty;
             if (!oppOrder.UserQuantities) {
@@ -40,6 +40,15 @@ export async function initiateOrder(
               userId: userId,
               quantity: remainingQty,
               orderId: orderId,
+            });
+            inMemory_OrderId[orderId].type = "SELL";
+            await prisma.order.update({
+              where: {
+                id: orderId,
+              },
+              data: {
+                type: "SELL",
+              },
             });
 
             remainingQty = 0;
@@ -53,17 +62,29 @@ export async function initiateOrder(
         while (tradeQty > 0 && order.UserQuantities.length > 0) {
           const userOrder = order.UserQuantities[0];
           const userTradeQty = Math.min(tradeQty, userOrder.quantity!);
-          if (inMemory_OrderId[userOrder.orderId!].type == "SELL") {
-            inMemory_OrderId[userOrder.orderId!].status == "EXECUTED";
+          if (inMemory_OrderId[userOrder.orderId!].type == "BUY" && inMemory_OrderId[userOrder.orderId!].status == 'EXECUTED') {
+            inMemory_OrderId[userOrder.orderId!].type == "SELL"
             await prisma.order.update({
               where: {
                 id: userOrder.orderId,
               },
               data: {
-                status: "EXECUTED",
+                type : 'SELL',
               },
             });
           }
+          if (inMemory_OrderId[userOrder.orderId!].type == "SELL" && inMemory_OrderId[userOrder.orderId!].status == 'LIVE') {
+            inMemory_OrderId[userOrder.orderId!].type == "BUY"
+            await prisma.order.update({
+              where: {
+                id: userOrder.orderId,
+              },
+              data: {
+                type : 'BUY',
+              },
+            });
+          }
+          
           const tradeId = createId();
           inMemory_trades[tradeId] = {
             eventId: eventId,

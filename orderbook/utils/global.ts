@@ -34,6 +34,7 @@ export interface OrderSchema {
   quantity: number;
   status: "LIVE" | "EXECUTED";
   userId: string;
+  eventId : string
 }
 export interface Event {
   title: string;

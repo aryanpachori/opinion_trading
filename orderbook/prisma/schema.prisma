@@ -27,20 +27,19 @@ model Trade {
   buyerOrderId  String
   sellerOrderId String
   createdAt     DateTime @default(now())
-  
 }
 
 model Order {
   id          String      @id
-  userId      String      
+  userId      String
   price       Float
   Quantity    Int
+  eventId     String
   Side        TradeSide
   type        OrderType
   status      OrderStatus
   portfolioId String?
   Portfolio   Portfolio?  @relation(fields: [portfolioId], references: [id])
-  
 }
 
 enum UserRole {

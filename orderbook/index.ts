@@ -70,7 +70,7 @@ setInterval(() => {
   processQueue();
 }, 1000);
 
-loadSnapshot();
+ loadSnapshot();
 setInterval(() => {
   saveSnapshot(
     inMemoryOrderBooks,

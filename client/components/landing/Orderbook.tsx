@@ -57,7 +57,7 @@ export default function OrderBook({ eventId }: OrderBookProps) {
   const [side, setSide] = useState<"YES" | "NO">("YES");
   const [tradePrice, setTradePrice] = useState("");
   const [tradeQuantity, setTradeQuantity] = useState("");
-  const userId = "zcjz751lsvz9v8ba58loaqo5";
+  const userId = "ffdmpaw1n3772yei1pc8icqm";
   useEffect(() => {
     setTitle("test");
     setDescription("");
