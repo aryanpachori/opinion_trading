@@ -5,15 +5,16 @@ import eventRouter from "./router/event";
 import bodyParser from "body-parser";
 import { redis } from "./services/redisClient";
 
-const app = express();
 
+const app = express();
+await redis.connect().then(() => {
+  console.log("connected to redis");
+});
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/v1/user", userRouter);
 app.use("/v1/event", eventRouter);
-await redis.connect().then(() => {
-  console.log("connected to redis");
-});
+
 app.listen(3000, () => {
   console.log("server is running on 3000");
 });

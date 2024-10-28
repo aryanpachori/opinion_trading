@@ -79,8 +79,8 @@ export default function OrderBook({ eventId }: OrderBookProps) {
       const data: WebSocketData = JSON.parse(event.data);
       console.log(data);
       setOrderBookData(data.orderbook);
-      setYesPrice(0);
-      setNoPrice(0);
+      setYesPrice(5);
+      setNoPrice(5);
       const newYesProb = (0 / 10) * 100;
       const newNoProb = (0 / 10) * 100;
       setYesProbability((prev) => [...prev, newYesProb]);

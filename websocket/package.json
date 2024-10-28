@@ -9,6 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "ioredis": "^5.4.1",
     "redis": "^4.7.0"
   }
 }

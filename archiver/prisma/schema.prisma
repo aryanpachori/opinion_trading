@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id          String @id
+  title       String
+  description String
+}
+
+model Order {
+  id       String      @id
+  userId   String
+  price    Float
+  Quantity Int
+  Side     TradeSide
+  type     OrderType
+  status   OrderStatus
+  eventId  String
+}
+
+model Trade {
+  id            String   @id
+  buyPrice      Float
+  sellPrice     Float
+  buyQty        Int
+  sellQty       Int
+  buyerId       String
+  sellerId      String
+  buyerOrderId  String
+  sellerOrderId String
+  createdAt     DateTime @default(now())
+  eventId       String
+}
+
+model User {
+  id    String @id
+  email String @unique
+}
+
+enum EventStatus {
+  ONGOING
+  ENDED
+}
+
+enum OrderStatus {
+  LIVE
+  EXECUTED
+}
+
+enum OrderType {
+  BUY
+  SELL
+}
+
+enum PayoutStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum TradeSide {
+  YES
+  NO
+}
+
+enum TradeStatus {
+  ACTIVE
+  PAST
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}

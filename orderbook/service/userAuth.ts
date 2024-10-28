@@ -1,6 +1,7 @@
+import { PrismaClient } from "@prisma/client";
 import { inr_balances } from "../utils/global";
 import { redis } from "./redisClient";
-
+const prisma = new PrismaClient()
 export async function userCreate(message: any) {
   const { responseId, userId } = message;
   if (!inr_balances[userId]) {
@@ -8,6 +9,12 @@ export async function userCreate(message: any) {
       balance: 0,
       lockedBalance: 0,
     };
+    await prisma.user.create({
+      data:{
+        id : userId,
+        email : `${responseId}@gmail.com`
+      }
+    })
     console.log(inr_balances);
     const data = JSON.stringify({
       status: "SUCCESS",
