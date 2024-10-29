@@ -130,12 +130,13 @@ export async function initiateOrder(
   }
 
   const broadcastData = {
+    eventId,
     orderbook: {
       yes: orderbook.YES,
       no: orderbook.NO,
     },
   };
-  await BroadcastChannel(eventId, broadcastData);
+  await BroadcastChannel("orderbook", broadcastData);
 
   return;
 }

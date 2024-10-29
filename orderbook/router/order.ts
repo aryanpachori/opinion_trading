@@ -136,12 +136,13 @@ router.post("/event", async (req, res) => {
   inMemoryOrderBooks[eventId] = generateOrderbook();
   const orderbook = inMemoryOrderBooks[eventId];
   const broadcastData = {
+    eventId,
     orderbook: {
       yes: orderbook.YES,
       no: orderbook.NO,
     },
   };
-  await BroadcastChannel(eventId, broadcastData);
+  await BroadcastChannel("orderbook", broadcastData);
   res.json({ message: "event added successfully" });
   console.log(inMemory_events);
 });

@@ -11,24 +11,43 @@ export const redis = createClient({
 
 await redis.connect().then(() => {
   console.log("connected to redis");
+  processStream();
 });
 
-async function processQueue() {
+async function processStream() {
+  const streamName = "event_streams";
+  const consumerName = "ws_broadcast_consumer";
+  let lastId = ">";
+
   while (true) {
-    const message = await redis.rPop("broadcastQueue");
-    if (message) {
-      const { eventId, data } = JSON.parse(message);
-      const orderbook = data.orderbook
+    const message = await redis.xReadGroup(
+      consumerName,
+      "ws_broadcast_consumer",
+      [{ key: streamName, id: lastId }],
+      { BLOCK: 0, COUNT: 1 }
+    );
 
-      inMemoryOrderBooks[eventId] = { orderbook };
+    if (message && message.length > 0) {
+      const streamData = message[0];
+      if (
+        streamData &&
+        Array.isArray(streamData.messages) &&
+        streamData.messages.length > 0
+      ) {
+        const messages = streamData.messages;
 
-      inMemoryOrderBooks[eventId] = { orderbook};
+        messages.forEach(({ id, message }: { id: string; message: any }) => {
+          const messageData = JSON.parse(message.data);
 
-      WebsocketServer.broadcast(eventId, data);
+          const eventId = messageData.eventId;
+          const orderbook = messageData.orderbook;
+          inMemoryOrderBooks[eventId] = { orderbook };
+          console.log(`Event ID: ${eventId}`, orderbook);
+          WebsocketServer.broadcast(eventId, {orderbook});
+        });
+      }
     }
   }
 }
+
 setupWebSocket();
-setInterval(() => {
-  processQueue();
-}, 1000);

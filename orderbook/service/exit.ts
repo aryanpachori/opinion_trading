@@ -144,11 +144,12 @@ export async function exit(
     console.log(inMemory_OrderId[orderId]);
   }
   const broadcastData = {
+    eventId,
     orderbook: {
       yes: orderbook.YES,
       no: orderbook.NO,
     },
   };
-  await BroadcastChannel(eventId, broadcastData);
+  await BroadcastChannel("orderbook", broadcastData);
   return;
 }
