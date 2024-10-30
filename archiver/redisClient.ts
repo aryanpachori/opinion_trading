@@ -8,6 +8,4 @@ export const redis = createClient({
     }
 })
 
-await redis.connect().then(()=>{
-    console.log("connected to  redis")
-})
+

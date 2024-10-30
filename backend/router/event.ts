@@ -10,6 +10,7 @@ router.post("/", async (req, res) => {
     responseId,
     type: "getEvents",
   });
+
   await engineQueue(data);
   await redis.subscribe("getEvent", (data) => {
     const parseData = JSON.parse(data);
@@ -82,7 +83,7 @@ router.post("/getEvent", async (req, res) => {
   const data = JSON.stringify({
     eventId,
     responseId,
-    type :"eventdetails"
+    type: "eventdetails",
   });
   await engineQueue(data);
   redis.subscribe("eventdetails", (data) => {
