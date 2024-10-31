@@ -45,18 +45,18 @@ export const initiateOrderRoute = async (message: any) => {
     userId: userId,
     eventId: eventId,
   };
-  await prisma.order.create({
-    data: {
-      id: orderId,
-      price: price,
-      Quantity: quantity,
-      userId: userId,
-      Side: side,
-      type: "BUY",
-      status: "LIVE",
-      eventId: eventId,
-    },
-  });
+ 
+  const Orderdata = {
+    id : orderId,
+    side: side,
+    type: "BUY",
+    price: price,
+    quantity: quantity,
+    status: "LIVE",
+    userId: userId,
+    eventId: eventId,
+  };
+  await BroadcastChannel("order_creation", Orderdata);
   console.log(inMemory_OrderId);
 
   await initiateOrder(userId, eventId, side, price, quantity, orderId);

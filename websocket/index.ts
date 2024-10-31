@@ -46,6 +46,8 @@ async function processStream() {
           WebsocketServer.broadcast(eventId, {orderbook});
         });
       }
+    }else{
+      console.log("no events at the moment")
     }
   }
 }

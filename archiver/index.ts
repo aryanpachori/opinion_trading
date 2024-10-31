@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { redis } from "./redisClient";
+import { PrismaClient } from "@prisma/client";
 
 const app = express();
 
@@ -15,7 +16,7 @@ await redis.connect().then(() => {
   console.log("connected to  redis");
   startArchiver();
 });
-
+const prisma = new PrismaClient();
 async function startArchiver() {
   const eventGroup = "event_streams";
   const consumerName = "archiver_consumer";
@@ -32,13 +33,30 @@ async function startArchiver() {
       const streamData = message[0];
       if (streamData && streamData.messages.length > 0) {
         const messages = streamData.messages;
-        messages.forEach(({ id, message }: { id: string; message: any }) => {
-          console.log(message);
-          if (message.type == "trade") {
-            console.log(message.type);
-            console.log(message.data);
+        messages.forEach(
+          async ({ id, message }: { id: string; message: any }) => {
+            if (message.type == "order_creation") {
+              const messageData = JSON.parse(message.data);
+              console.log(message.type);
+              console.log(message.data);
+
+              const trade = await prisma.order.create({
+                data: {
+                  id: messageData.id,
+                  userId: messageData.userId,
+                  price: messageData.price,
+                  Quantity: messageData.quantity,
+                  type: messageData.type,
+                  status: messageData.status,
+                  eventId: messageData.eventId,
+                  Side: messageData.side,
+                },
+              });
+              console.log(trade);
+            } else if (message.type == "trade") {
+            }
           }
-        });
+        );
       }
     }
   }

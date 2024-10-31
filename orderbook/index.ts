@@ -86,4 +86,3 @@ setInterval(() => {
   );
 }, 10000);
 
-console.log({ inMemoryOrderBooks, inr_balances, inMemory_OrderId });

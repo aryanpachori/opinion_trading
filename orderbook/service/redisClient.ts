@@ -15,6 +15,7 @@ export async function startEngine() {
     console.log("connected to redis");
   });
   await initializeStreamGroups();
+  
 }
 
 async function initializeStreamGroups() {
