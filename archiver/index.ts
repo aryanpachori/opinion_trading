@@ -40,7 +40,7 @@ async function startArchiver() {
               console.log(message.type);
               console.log(message.data);
 
-              const trade = await prisma.order.create({
+              const order = await prisma.order.create({
                 data: {
                   id: messageData.id,
                   userId: messageData.userId,
@@ -52,8 +52,27 @@ async function startArchiver() {
                   Side: messageData.side,
                 },
               });
-              console.log(trade);
+              console.log(order);
             } else if (message.type == "trade") {
+              console.log("TRADE", message.type);
+              console.log(message.data);
+              const messageData = JSON.parse(message.data);
+
+              const trade = await prisma.trade.create({
+                data: {
+                  id: messageData.id,
+                  eventId: messageData.eventId,
+                  sellerId: messageData.sellerId,
+                  sellerOrderId: messageData.sellerOrder_id,
+                  buyerOrderId: messageData.buyerOrder_id,
+                  sellQty: messageData.sell_qty,
+                  buyerId: messageData.buyerId,
+                  buyQty: messageData.buy_qty,
+                  buyPrice: messageData.Buyprice,
+                  sellPrice: messageData.Sellprice,
+                },
+              });
+              console.log(trade);
             }
           }
         );

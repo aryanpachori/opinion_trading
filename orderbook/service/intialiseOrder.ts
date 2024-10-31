@@ -103,21 +103,9 @@ export async function initiateOrder(
             Buyprice: order.price,
             Sellprice: 10 - order.price,
           };
-          // await prisma.trade.create({
-          //   data: {
-          //     id: tradeId,
-          //     eventId: eventId,
-          //     sellerId: userOrder.userId!,
-          //     sellerOrderId: userOrder.orderId!,
-          //     buyerOrderId: orderId,
-          //     buyerId: userId,
-          //     sellQty: userOrder.quantity!,
-          //     buyQty: tradeQty,
-          //     buyPrice: order.price,
-          //     sellPrice: 10 - order.price,
-          //   },
-          // });
+
           const tradeData = {
+            id: tradeId,
             eventId: eventId,
             sellerId: userOrder.userId!,
             sellerOrder_id: userOrder.orderId!,
