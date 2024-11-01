@@ -62,9 +62,8 @@ async function processQueue() {
         break;
 
       case "eventdetails":
-        await fetchEvent(message)  ;
+        await fetchEvent(message);
         break;
-
     }
   }
 }
@@ -75,14 +74,20 @@ setInterval(() => {
   processQueue();
 }, 1000);
 
- loadSnapshot();
-setInterval(() => {
-  saveSnapshot(
-    inMemoryOrderBooks,
-    inr_balances,
-    inMemory_events,
-    inMemory_OrderId,
-    inMemory_trades
-  );
-}, 10000);
-
+loadSnapshot();
+// setInterval(() => {
+//   saveSnapshot(
+//     inMemoryOrderBooks,
+//     inr_balances,
+//     inMemory_events,
+//     inMemory_OrderId,
+//     inMemory_trades
+//   );
+// }, 10000);
+saveSnapshot(
+  inMemoryOrderBooks,
+  inr_balances,
+  inMemory_events,
+  inMemory_OrderId,
+  inMemory_trades
+);

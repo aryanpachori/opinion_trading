@@ -8,6 +8,7 @@ import {
   inMemoryOrderBooks,
   inr_balances,
 } from "../utils/global";
+import { saveToS3 } from "./s3";
 export function saveSnapshot(
   inMemoryOrderBooks: any,
   inr_balances: any,
@@ -23,7 +24,7 @@ export function saveSnapshot(
     trades: inMemory_trades,
     timstamp: new Date().toISOString(),
   };
-
+  saveToS3(snapshot);
   fs.writeFileSync(path, JSON.stringify(snapshot));
 }
 
