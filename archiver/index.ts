@@ -73,6 +73,32 @@ async function startArchiver() {
                 },
               });
               console.log(trade);
+            } else if (message.type == "order_update") {
+              console.log("order_update", message.data);
+              const messageData = JSON.parse(message.data);
+
+              const order = await prisma.order.update({
+                where: {
+                  id: messageData.id,
+                },
+                data: {
+                  type: messageData.type,
+                },
+              });
+              console.log(order);
+            } else if (message.type == "order_exit") {
+              console.log("order_exit", message.data);
+              const messageData = JSON.parse(message.data);
+
+              const order = await prisma.order.update({
+                where: {
+                  id: messageData.id,
+                },
+                data: {
+                  status: messageData.type,
+                },
+              });
+              console.log(order);
             }
           }
         );

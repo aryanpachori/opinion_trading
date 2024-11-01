@@ -42,15 +42,19 @@ export async function initiateOrder(
               orderId: orderId,
             });
             inMemory_OrderId[orderId].type = "SELL";
-            await prisma.order.update({
-              where: {
-                id: orderId,
-              },
-              data: {
-                type: "SELL",
-              },
-            });
-
+            // await prisma.order.update({
+            //   where: {
+            //     id: orderId,
+            //   },
+            //   data: {
+            //     type: "SELL",
+            //   },
+            // });
+            const orderUpdate = {
+              id: orderId,
+              type: "SELL",
+            };
+            await BroadcastChannel("order_update", orderUpdate);
             remainingQty = 0;
           }
         });
@@ -67,28 +71,38 @@ export async function initiateOrder(
             inMemory_OrderId[userOrder.orderId!].status == "EXECUTED"
           ) {
             inMemory_OrderId[userOrder.orderId!].type == "SELL";
-            await prisma.order.update({
-              where: {
-                id: userOrder.orderId,
-              },
-              data: {
-                type: "SELL",
-              },
-            });
+            // await prisma.order.update({
+            //   where: {
+            //     id: userOrder.orderId,
+            //   },
+            //   data: {
+            //     type: "SELL",
+            //   },
+            // });
+            const orderUpdate = {
+              id: orderId,
+              type: "SELL",
+            };
+            await BroadcastChannel("order_update", orderUpdate);
           }
           if (
             inMemory_OrderId[userOrder.orderId!].type == "SELL" &&
             inMemory_OrderId[userOrder.orderId!].status == "LIVE"
           ) {
             inMemory_OrderId[userOrder.orderId!].type == "BUY";
-            await prisma.order.update({
-              where: {
-                id: userOrder.orderId,
-              },
-              data: {
-                type: "BUY",
-              },
-            });
+            // await prisma.order.update({
+            //   where: {
+            //     id: userOrder.orderId,
+            //   },
+            //   data: {
+            //     type: "BUY",
+            //   },
+            // });
+            const orderUpdate = {
+              id: userOrder.orderId,
+              type: "BUY",
+            };
+            await BroadcastChannel("order_update", orderUpdate);
           }
 
           const tradeId = createId();

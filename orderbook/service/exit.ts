@@ -50,20 +50,33 @@ export async function exit(
               Sellprice: price,
             };
 
-            await prisma.trade.create({
-              data: {
-                id: tradeId,
-                eventId: eventId,
-                sellerId: userId,
-                sellerOrderId: orderId,
-                buyerId: userOrder.userId!,
-                buyerOrderId: userOrder.orderId!,
-                sellQty: remainingQuantity,
-                buyQty: remainingQuantity,
-                buyPrice: order.price,
-                sellPrice: price,
-              },
-            });
+            // await prisma.trade.create({
+            //   data: {
+            //     id: tradeId,
+            //     eventId: eventId,
+            //     sellerId: userId,
+            //     sellerOrderId: orderId,
+            //     buyerId: userOrder.userId!,
+            //     buyerOrderId: userOrder.orderId!,
+            //     sellQty: remainingQuantity,
+            //     buyQty: remainingQuantity,
+            //     buyPrice: order.price,
+            //     sellPrice: price,
+            //   },
+            // });
+            const tradeData = {
+              id: tradeId,
+              eventId: eventId,
+              sellerId: userId,
+              sellerOrder_id: orderId,
+              buyerOrder_id: userOrder.orderId!,
+              sell_qty: remainingQuantity,
+              buyerId: userOrder.userId!,
+              buy_qty: remainingQuantity,
+              Buyprice: order.price,
+              Sellprice: price,
+            };
+            await BroadcastChannel("trade", tradeData);
             userOrder.quantity! -= remainingQuantity;
             if (userOrder.quantity === 0) {
               order.UserQuantities.splice(i, 1);
@@ -87,20 +100,33 @@ export async function exit(
               Buyprice: order.price,
               Sellprice: price,
             };
-            await prisma.trade.create({
-              data: {
-                id: tradeId,
-                eventId: eventId,
-                sellerId: userId,
-                buyerId: userOrder.userId!,
-                sellerOrderId: orderId,
-                buyerOrderId: userOrder.orderId!,
-                sellPrice: price,
-                buyPrice: order.price,
-                sellQty: userOrder.quantity!,
-                buyQty: userOrder.quantity!,
-              },
-            });
+            // await prisma.trade.create({
+            //   data: {
+            //     id: tradeId,
+            //     eventId: eventId,
+            //     sellerId: userId,
+            //     buyerId: userOrder.userId!,
+            //     sellerOrderId: orderId,
+            //     buyerOrderId: userOrder.orderId!,
+            //     sellPrice: price,
+            //     buyPrice: order.price,
+            //     sellQty: userOrder.quantity!,
+            //     buyQty: userOrder.quantity!,
+            //   },
+            // });
+            const tradeData = {
+              id: tradeId,
+              eventId: eventId,
+              sellerId: userId,
+              sellerOrder_id: orderId,
+              buyerOrder_id: userOrder.orderId!,
+              sell_qty: userOrder.quantity!,
+              buyerId: userOrder.userId!,
+              buy_qty: userOrder.quantity!,
+              Buyprice: order.price,
+              Sellprice: price,
+            };
+            await BroadcastChannel("trade", tradeData);
 
             remainingQuantity -= userOrder.quantity!;
 
@@ -109,14 +135,19 @@ export async function exit(
           }
         }
         inMemory_OrderId[orderId].status = "EXECUTED";
-        await prisma.order.update({
-          where: {
-            id: orderId,
-          },
-          data: {
-            status: "EXECUTED",
-          },
-        });
+        // await prisma.order.update({
+        //   where: {
+        //     id: orderId,
+        //   },
+        //   data: {
+        //     status: "EXECUTED",
+        //   },
+        // });
+        const orderExit = {
+          id: orderId,
+          status: "EXECUTED",
+        };
+        await BroadcastChannel("order_exit", orderExit);
         console.log(inMemory_OrderId[orderId]);
         order.quantity -= quantity;
       }
@@ -133,15 +164,19 @@ export async function exit(
       }
     });
     inMemory_OrderId[orderId].type = "SELL";
-    await prisma.order.update({
-      where: {
-        id: orderId,
-      },
-      data: {
-        type: "SELL",
-      },
-    });
-    console.log(inMemory_OrderId[orderId]);
+    // await prisma.order.update({
+    //   where: {
+    //     id: orderId,
+    //   },
+    //   data: {
+    //     type: "SELL",
+    //   },
+    // });
+    const orderUpdate = {
+      id: orderId,
+      type: "SELL",
+    };
+    await BroadcastChannel("order_update", orderUpdate);
   }
   const broadcastData = {
     eventId,
