@@ -8,14 +8,21 @@ export const redis = createClient({
   },
 });
 
-export const redis2 = new Redis(process.env.AIVEN_REDIS!);
+export const redis2 = createClient({
+  socket: {
+    host: "localhost",
+    port: 6380,
+  },
+});
 
 export async function startEngine() {
   await redis.connect().then(() => {
     console.log("connected to redis");
   });
+  await redis2.connect().then(() => {
+    console.log("connected to redis2");
+  });
   await initializeStreamGroups();
-  
 }
 
 async function initializeStreamGroups() {

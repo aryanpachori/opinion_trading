@@ -8,14 +8,17 @@ export const redis = createClient({
   },
 });
 
-const redis2 = new Redis(
-  process.env.AIVEN_REDIS!
-);
+export const redis2 = createClient({
+  socket: {
+    host: "localhost",
+    port: 6380,
+  },
+});
 
 redis.on("error", (error) => {
   console.log(error);
 });
 
 export async function engineQueue(data: any) {
-  redis2.lpush("engineQueue", data);
+  redis2.lPush("engineQueue", data);
 }
