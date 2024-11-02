@@ -53,6 +53,7 @@ async function startArchiver() {
                 },
               });
               console.log(order);
+              return;
             } else if (message.type == "trade") {
               console.log("TRADE", message.type);
               console.log(message.data);
@@ -73,6 +74,7 @@ async function startArchiver() {
                 },
               });
               console.log(trade);
+              return;
             } else if (message.type == "order_update") {
               console.log("order_update", message.data);
               const messageData = JSON.parse(message.data);
@@ -86,6 +88,7 @@ async function startArchiver() {
                 },
               });
               console.log(order);
+              return;
             } else if (message.type == "order_exit") {
               console.log("order_exit", message.data);
               const messageData = JSON.parse(message.data);
@@ -99,6 +102,7 @@ async function startArchiver() {
                 },
               });
               console.log(order);
+              return;
             }
           }
         );
