@@ -26,11 +26,11 @@ app.use(bodyParser.json());
 app.use("/v1/worker", orderRouter);
 async function processQueue() {
   while (true) {
-    const data: any = await redis2.brPop("engineQueue", 0);
+    const data: any = await redis2.brPop("engineQueue",0);
     if (!data) continue;
     console.log(data);
-
-    const message = JSON.parse(data[1]);
+    const {element} = data
+    const message = JSON.parse(element);
     console.log(message);
     const { type } = message;
 
@@ -75,22 +75,22 @@ setInterval(() => {
   processQueue();
 }, 1000);
 
-// loadSnapshot();
-// setInterval(() => {
-//   saveSnapshot(
-//     inMemoryOrderBooks,
-//     inr_balances,
-//     inMemory_events,
-//     inMemory_OrderId,
-//     inMemory_trades
-//   );
-// }, 10000);
-// saveSnapshot(
-//   inMemoryOrderBooks,
-//   inr_balances,
-//   inMemory_events,
-//   inMemory_OrderId,
-//   inMemory_trades
-// );
-loadFromS3();
+loadSnapshot();
+setInterval(() => {
+  saveSnapshot(
+    inMemoryOrderBooks,
+    inr_balances,
+    inMemory_events,
+    inMemory_OrderId,
+    inMemory_trades
+  );
+}, 10000);
+saveSnapshot(
+  inMemoryOrderBooks,
+  inr_balances,
+  inMemory_events,
+  inMemory_OrderId,
+  inMemory_trades
+);
+//loadFromS3();
 console.log(inMemoryOrderBooks, inr_balances);

@@ -23,7 +23,7 @@ const Page = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [portfolioData, setPortfolioData] = useState<Trade[]>([]);
 
-  const userId = "lugw5s43fmocccb3e4b8b46d";
+  const userId = "j1181ox4uw2xituhznxdl7e9";
 
   useEffect(() => {
     if (userId) {

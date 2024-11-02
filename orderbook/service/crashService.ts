@@ -24,7 +24,7 @@ export function saveSnapshot(
     trades: inMemory_trades,
     timstamp: new Date().toISOString(),
   };
-  saveToS3(snapshot);
+  //saveToS3(snapshot);
   fs.writeFileSync(path, JSON.stringify(snapshot));
 }
 

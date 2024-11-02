@@ -1,4 +1,11 @@
 import aws from "aws-sdk";
+import {
+  inMemory_events,
+  inMemory_OrderId,
+  inMemory_trades,
+  inMemoryOrderBooks,
+  inr_balances,
+} from "../utils/global";
 
 const s3 = new aws.S3({
   region: "ap-south-1",
@@ -30,5 +37,11 @@ export async function loadFromS3() {
     })
     .promise();
   const snapshot = JSON.parse(data.Body?.toString("utf-8")!);
-  console.log(snapshot);
+  const { orderbook, balances, events, orderIds, trades } = snapshot;
+
+  Object.assign(inMemoryOrderBooks, orderbook);
+  Object.assign(inr_balances, balances);
+  Object.assign(inMemory_events, events);
+  Object.assign(inMemory_OrderId, orderIds);
+  Object.assign(inMemory_trades, trades);
 }
