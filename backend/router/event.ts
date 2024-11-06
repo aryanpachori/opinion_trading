@@ -39,7 +39,7 @@ router.post("/initiate", async (req, res) => {
     quantity,
     type: "initiateOrder",
   });
-  await engineQueue(data);
+
   await redis.subscribe("initiateOrder", (data) => {
     const parseData = JSON.parse(data);
     if (parseData.responseId === responseId && parseData.status == "SUCCESS") {
@@ -49,6 +49,7 @@ router.post("/initiate", async (req, res) => {
     redis.unsubscribe("initiateOrder");
     return res.status(401).json({ message: "error placing order" });
   });
+  await engineQueue(data);
 });
 
 router.post("/exit", async (req, res) => {
@@ -65,7 +66,7 @@ router.post("/exit", async (req, res) => {
     quantity,
     type: "orderExit",
   });
-  await engineQueue(data);
+
   await redis.subscribe("orderExit", (data) => {
     const parseData = JSON.parse(data);
     if (parseData.responseId == responseId && parseData.status == "SUCCESS") {
@@ -75,6 +76,7 @@ router.post("/exit", async (req, res) => {
     redis.unsubscribe("orderExit");
     return res.status(401).json({ message: "error exiting the order" });
   });
+  await engineQueue(data);
 });
 
 router.post("/getEvent", async (req, res) => {
