@@ -104,6 +104,7 @@ async function startArchiver() {
               console.log(order);
               return;
             }
+            await redis.xAck(eventGroup, eventGroup, id);
           }
         );
       }

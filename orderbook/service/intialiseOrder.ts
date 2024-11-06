@@ -80,7 +80,7 @@ export async function initiateOrder(
             //   },
             // });
             const orderUpdate = {
-              id: orderId,
+              id: userOrder.orderId,
               type: "SELL",
             };
             await BroadcastChannel("order_update", orderUpdate);
