@@ -120,6 +120,10 @@ export default function OrderBook({ eventId }: OrderBookProps) {
     return `${Math.min((quantity / maxQuantity) * 100, 100)}%`;
   };
   async function handleTrade() {
+    if (Number(tradeQuantity) <= 0) {
+      toast.error("qty should be greater than 0");
+      return;
+    }
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/event/initiate`,
       {
@@ -131,7 +135,7 @@ export default function OrderBook({ eventId }: OrderBookProps) {
       }
     );
     if (response.status === 200) {
-      console.log("response",response);
+      console.log("response", response);
       toast.success("Order placed successfully!");
     } else {
       toast.error("Error placing order!");

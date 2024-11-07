@@ -6,7 +6,7 @@ import ProfileHeader from "./ProfileHeader";
 import { Wallet } from "lucide-react";
 import { getBalance } from "@/actions/balance/balance";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+//import { redirect } from "next/navigation";
 
 interface navMenutItemType {
   title: string;
@@ -19,7 +19,7 @@ export default function Appbar() {
 
  
   if (status === "unauthenticated") {
-    redirect("/auth/signin");
+    //redirect("/auth/signin");
   }
 
   const userId = session?.user?.id;
