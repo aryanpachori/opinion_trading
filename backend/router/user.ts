@@ -58,7 +58,7 @@ router.post("/recharge", async (req, res) => {
     responseId,
     type: "userRecharge",
   });
-  await engineQueue(data);
+
   await redis.subscribe("userRecharge", (data) => {
     const parseData = JSON.parse(data);
     if (parseData.responseId == responseId && parseData.status === "SUCCESS") {
@@ -68,6 +68,7 @@ router.post("/recharge", async (req, res) => {
     redis.unsubscribe("userRecharge");
     return res.status(401).json({ message: "user recharge failed" });
   });
+  await engineQueue(data);
 });
 
 router.post("/balance", async (req, res) => {
@@ -79,17 +80,18 @@ router.post("/balance", async (req, res) => {
     responseId,
     type: "userBalance",
   });
-  await engineQueue(data);
+
   await redis.subscribe("userBalance", (data) => {
     const parseData = JSON.parse(data);
     if (parseData.responseId == responseId && parseData.status === "SUCCESS") {
       redis.unsubscribe("userBalance");
-     
-     return res.json({ balance: parseData.balance });
+
+      return res.json({ balance: parseData.balance });
     }
     redis.unsubscribe("userBalance");
     return res.json("error fetching the balance");
   });
+  await engineQueue(data);
 });
 
 export default router;

@@ -20,6 +20,8 @@ import { ArrowUpDown } from "lucide-react";
 
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 interface OrderBookItem {
   price: number;
@@ -40,7 +42,11 @@ interface OrderBookProps {
 }
 
 export default function OrderBook({ eventId }: OrderBookProps) {
-  // const { data } = useSession();
+  const { data } = useSession();
+  if (!data?.user) {
+    // redirect("/auth/signin");
+  }
+
   const [orderBookData, setOrderBookData] = useState<OrderBookData | null>(
     null
   );
@@ -57,7 +63,7 @@ export default function OrderBook({ eventId }: OrderBookProps) {
   const [side, setSide] = useState<"YES" | "NO">("YES");
   const [tradePrice, setTradePrice] = useState("");
   const [tradeQuantity, setTradeQuantity] = useState("");
-  const userId = "j1181ox4uw2xituhznxdl7e9";
+  const userId = data.user.id;
   useEffect(() => {
     async function eventDetails() {
       const response = await axios.post(
@@ -79,12 +85,28 @@ export default function OrderBook({ eventId }: OrderBookProps) {
       const data: WebSocketData = JSON.parse(event.data);
       console.log(data);
       setOrderBookData(data.orderbook);
+      console.log(orderBookData);
       setYesPrice(5);
       setNoPrice(5);
-      const newYesProb = (0 / 10) * 100;
-      const newNoProb = (0 / 10) * 100;
-      setYesProbability((prev) => [...prev, newYesProb]);
-      setNoProbability((prev) => [...prev, newNoProb]);
+
+      if (data.orderbook) {
+        const totalYesQuantity = data.orderbook.yes.reduce(
+          (acc, item) => acc + item.quantity,
+          0
+        );
+        const totalNoQuantity = data.orderbook.no.reduce(
+          (acc, item) => acc + item.quantity,
+          0
+        );
+        const totalQuantity = totalYesQuantity + totalNoQuantity;
+
+        if (totalQuantity > 0) {
+          const newYesProb = (totalNoQuantity / totalQuantity) * 100;
+          const newNoProb = (totalYesQuantity / totalQuantity) * 100;
+          setYesProbability((prev) => [...prev, newYesProb]);
+          setNoProbability((prev) => [...prev, newNoProb]);
+        }
+      }
       setTimeSeries((prev) => [...prev, new Date().toLocaleTimeString()]);
     };
     ws.onerror = (error) => console.error("WebSocket error:", error);

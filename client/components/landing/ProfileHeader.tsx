@@ -14,6 +14,7 @@ const ProfileHeader = () => {
           {!data?.user ? "Login/Signup" : "Trade Now"}
         </Button>
       </Link>
+      
     </div>
   );
 };

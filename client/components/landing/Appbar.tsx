@@ -5,6 +5,8 @@ import { NavigationMenu } from "./Navmenu";
 import ProfileHeader from "./ProfileHeader";
 import { Wallet } from "lucide-react";
 import { getBalance } from "@/actions/balance/balance";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 interface navMenutItemType {
   title: string;
@@ -13,15 +15,28 @@ interface navMenutItemType {
 
 export default function Appbar() {
   const [balance, setBalance] = useState(0);
-  const userId = "j1181ox4uw2xituhznxdl7e9";
+  const { data: session, status } = useSession();
+
+ 
+  if (status === "unauthenticated") {
+    redirect("/auth/signin");
+  }
+
+  const userId = session?.user?.id;
+  console.log("userId:", userId);
+
   useEffect(() => {
     async function loadBal() {
-      const bal = await getBalance(userId);
-      setBalance(bal);
+      if (userId) {
+        const bal = await getBalance(userId);
+        console.log("Balance:", bal);
+        setBalance(bal);
+      }
     }
     loadBal();
-  }, []);
-  const navMenutItem: Array<navMenutItemType> = [
+  }, [userId]); 
+
+  const navMenuItems: Array<navMenutItemType> = [
     { title: "Events", link: "/event" },
     { title: "Portfolio", link: "/portfolio" },
     { title: "Recharge", link: "/event/recharge" },
@@ -42,13 +57,13 @@ export default function Appbar() {
 
           {/* NavMenu */}
           <nav className="hidden md:flex gap-10">
-            {navMenutItem.map((item, index) => (
+            {navMenuItems.map((item, index) => (
               <NavigationMenu title={item.title} link={item.link} key={index} />
             ))}
           </nav>
+
           {/* ProfileHeader */}
           <div className="flex gap-3 items-center">
-            {" "}
             <button className="bg-gray-800 text-white border-gray-700 hover:bg-gray-700 hover:text-white border rounded pr-4 pf-4 pt-2 pb-2 flex items-center space-x-2">
               <Wallet className="h-5 w-5 ml-3" />
               <span className="font-mono">₹ {balance}</span>

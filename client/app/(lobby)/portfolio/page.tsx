@@ -6,6 +6,8 @@ import Portfolio from "../../../components/landing/Portfolio";
 import toast, { Toaster } from "react-hot-toast";
 import { getOrders } from "@/actions/portfolio/portfolio";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export interface Trade {
   id: string;
@@ -22,10 +24,15 @@ export interface Trade {
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [portfolioData, setPortfolioData] = useState<Trade[]>([]);
+  const { data } = useSession();
 
-  const userId = "j1181ox4uw2xituhznxdl7e9";
+  if (!data?.user) {
+    // redirect("/auth/signin");
+  }
+  const userId = data?.user.id;
 
   useEffect(() => {
+    
     if (userId) {
       getPortfolioDetails(userId);
     }
@@ -53,14 +60,17 @@ const Page = () => {
   }
   async function handleExit(trade: Trade) {
     const { id, price, Quantity, eventId, Side, userId } = trade;
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/event/exit`, {
-      userId,
-      eventId,
-      orderId: id,
-      side: Side,
-      price,
-      quantity: Quantity,
-    });
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/event/exit`,
+      {
+        userId,
+        eventId,
+        orderId: id,
+        side: Side,
+        price,
+        quantity: Quantity,
+      }
+    );
     if (response.status === 200) {
       toast.success("Order processed succesfully");
       setTimeout(() => {

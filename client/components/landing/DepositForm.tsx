@@ -9,8 +9,18 @@ import { Toaster, toast } from "react-hot-toast";
 // import { createOrder } from "@/actions/balance/order";
 import axios from "axios";
 import dotenv from "dotenv";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 dotenv.config();
 const DepositForm = () => {
+  const { data: session, status } = useSession();
+
+ 
+  if (status === "unauthenticated") {
+    redirect("/auth/signin");
+  }
+
+  
   const [depositAmount, setDepositAmount] = useState(0);
   const [summary, setSummary] = useState({
     rechargeAmount: 0,
@@ -41,7 +51,7 @@ const DepositForm = () => {
   };
 
   async function handleRechageClick() {
-    const userId = "j1181ox4uw2xituhznxdl7e9";
+    const userId = session?.user?.id;
     //  const orderId = await createOrder(depositAmount , userId)
 
     //console.log(orderId);

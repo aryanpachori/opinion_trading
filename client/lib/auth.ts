@@ -1,11 +1,10 @@
 import GoogleProvider from "next-auth/providers/google";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+
 import { DefaultSession, NextAuthOptions } from "next-auth";
 import { PrismaClient } from "@prisma/client";
-  
+import axios from "axios";
 
-const prisma = new PrismaClient()
-
+const prisma = new PrismaClient();
 
 declare module "next-auth" {
   interface User {
@@ -29,13 +28,11 @@ declare module "next-auth/jwt" {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-    
   ],
   callbacks: {
     async signIn({ user }) {
@@ -54,14 +51,16 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
             },
           });
-          user.id = newUser.id; 
+           axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/signin`, {
+            userId: newUser.id,
+          });
+          user.id = newUser.id;
         } else {
-          user.id = isUserExists.id; 
+          user.id = isUserExists.id;
         }
-
       } catch (error) {
         console.error("Error checking user existence:", error);
-        return false; 
+        return false;
       }
 
       return true;
@@ -82,19 +81,10 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/auth/signin", 
+    signIn: "/auth/signin",
   },
   session: {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
-
-
-
-
-
-
-
-
-
