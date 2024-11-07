@@ -24,19 +24,19 @@ export interface Trade {
 const Page = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [portfolioData, setPortfolioData] = useState<Trade[]>([]);
-  const { data } = useSession();
+  const { data : session , status } = useSession();
 
-  if (!data?.user) {
-    // redirect("/auth/signin");
+  if (status == "unauthenticated") {
+    redirect("/auth/signin");
   }
-  const userId = data?.user.id;
+  const userId =session?.user.id;
 
   useEffect(() => {
     
     if (userId) {
       getPortfolioDetails(userId);
     }
-  }, []);
+  }, [userId]);
 
   const getPortfolioDetails = useCallback(async (userId: string) => {
     setLoading(true);

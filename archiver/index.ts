@@ -12,11 +12,14 @@ app.use(bodyParser.json());
 app.listen(3003, () => {
   console.log("server running on 3003");
 });
+
 await redis.connect().then(() => {
-  console.log("connected to  redis");
+  console.log("connected to redis");
   startArchiver();
 });
+
 const prisma = new PrismaClient();
+
 async function startArchiver() {
   const eventGroup = "event_streams";
   const consumerName = "archiver_consumer";
@@ -29,16 +32,17 @@ async function startArchiver() {
       [{ key: eventGroup, id: lastId }],
       { BLOCK: 0, COUNT: 1 }
     );
+
     if (message && message.length > 0) {
       const streamData = message[0];
       if (streamData && streamData.messages.length > 0) {
         const messages = streamData.messages;
+        
         for (const { id, message } of messages) {
-          if (message.type == "order_creation") {
-            const messageData = JSON.parse(message.data);
-            console.log(message.type);
-            console.log(message.data);
+          const messageData = JSON.parse(message.data);
 
+          if (message.type == "order_creation") {
+            console.log(message.type, message.data);
             const order = await prisma.order.create({
               data: {
                 id: messageData.id,
@@ -52,12 +56,9 @@ async function startArchiver() {
               },
             });
             console.log(order);
-            return;
-          } else if (message.type == "trade") {
-            console.log("TRADE", message.type);
-            console.log(message.data);
-            const messageData = JSON.parse(message.data);
 
+          } else if (message.type == "trade") {
+            console.log("TRADE", message.type, message.data);
             const trade = await prisma.trade.create({
               data: {
                 id: messageData.id,
@@ -73,39 +74,29 @@ async function startArchiver() {
               },
             });
             console.log(trade);
-            return;
+
           } else if (message.type == "order_update") {
             console.log("order_update", message.data);
-            const messageData = JSON.parse(message.data);
-
             const order = await prisma.order.update({
-              where: {
-                id: messageData.id,
-              },
-              data: {
-                type: messageData.type,
-              },
+              where: { id: messageData.id },
+              data: { type: messageData.type },
             });
             console.log(order);
-            return;
+
           } else if (message.type == "order_exit") {
             console.log("order_exit", message.data);
-            const messageData = JSON.parse(message.data);
-
             const order = await prisma.order.update({
-              where: {
-                id: messageData.id,
-              },
-              data: {
-                status: messageData.type,
-              },
+              where: { id: messageData.id },
+              data: { status: messageData.type },
             });
             console.log(order);
-            return;
           }
+
+          // Acknowledge the msg after procesing
           await redis.xAck(eventGroup, consumerName, id);
         }
       }
     }
   }
 }
+

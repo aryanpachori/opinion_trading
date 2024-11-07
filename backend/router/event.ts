@@ -11,7 +11,6 @@ router.post("/", async (req, res) => {
     type: "getEvents",
   });
 
-  await engineQueue(data);
   await redis.subscribe("getEvent", (data) => {
     const parseData = JSON.parse(data);
     if (parseData.responseId == responseId && parseData.status == "SUCCESS") {
@@ -21,6 +20,7 @@ router.post("/", async (req, res) => {
     redis.unsubscribe("getEvent");
     return res.status(401).json({ message: "error fetching events" });
   });
+  await engineQueue(data);
 });
 
 router.post("/initiate", async (req, res) => {
@@ -87,7 +87,7 @@ router.post("/getEvent", async (req, res) => {
     responseId,
     type: "eventdetails",
   });
-  await engineQueue(data);
+ 
   redis.subscribe("eventdetails", (data) => {
     const parseData = JSON.parse(data);
     if (parseData.responseId == responseId && parseData.status == "SUCCESS") {
@@ -97,6 +97,7 @@ router.post("/getEvent", async (req, res) => {
     redis.unsubscribe("eventdetails");
     return res.json({ message: "error fetching event details" });
   });
+  await engineQueue(data);
 });
 
 export default router;

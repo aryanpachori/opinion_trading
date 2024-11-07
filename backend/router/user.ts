@@ -13,7 +13,7 @@ router.post("/signin", async (req, res) => {
     responseId,
     type: "userLogin",
   });
-  await engineQueue(data);
+ 
   await redis.subscribe("userLogin", (data) => {
     const parseData = JSON.parse(data);
     if (parseData.responseId == responseId && parseData.status == "SUCCESS") {
@@ -23,6 +23,7 @@ router.post("/signin", async (req, res) => {
     redis.unsubscribe("userLogin");
     return res.status(401).json({ message: "user not found" });
   });
+  await engineQueue(data);
 });
 
 router.post("/create", async (req, res) => {
@@ -34,7 +35,7 @@ router.post("/create", async (req, res) => {
     type: "userCreation",
   });
 
-  await engineQueue(data);
+ 
 
   await redis.subscribe("userCreation", (data) => {
     const parseData = JSON.parse(data);
@@ -47,6 +48,7 @@ router.post("/create", async (req, res) => {
     redis.unsubscribe("userCreation");
     return res.status(401).json({ message: "user failed to create" });
   });
+  await engineQueue(data);
 });
 
 router.post("/recharge", async (req, res) => {

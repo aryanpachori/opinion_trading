@@ -42,9 +42,10 @@ interface OrderBookProps {
 }
 
 export default function OrderBook({ eventId }: OrderBookProps) {
-  const { data } = useSession();
-  if (!data?.user) {
-    // redirect("/auth/signin");
+  const { data: session, status } = useSession();
+
+  if (status === "unauthenticated") {
+    redirect("/auth/signin");
   }
 
   const [orderBookData, setOrderBookData] = useState<OrderBookData | null>(
@@ -63,7 +64,7 @@ export default function OrderBook({ eventId }: OrderBookProps) {
   const [side, setSide] = useState<"YES" | "NO">("YES");
   const [tradePrice, setTradePrice] = useState("");
   const [tradeQuantity, setTradeQuantity] = useState("");
-  const userId = data.user.id;
+  const userId = session?.user?.id;
   useEffect(() => {
     async function eventDetails() {
       const response = await axios.post(
@@ -130,6 +131,7 @@ export default function OrderBook({ eventId }: OrderBookProps) {
       }
     );
     if (response.status === 200) {
+      console.log("response",response);
       toast.success("Order placed successfully!");
     } else {
       toast.error("Error placing order!");

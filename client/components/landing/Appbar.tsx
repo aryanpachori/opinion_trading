@@ -23,7 +23,7 @@ export default function Appbar() {
   }
 
   const userId = session?.user?.id;
-  console.log("userId:", userId);
+  
 
   useEffect(() => {
     async function loadBal() {

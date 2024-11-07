@@ -10,7 +10,7 @@ export async function getOrders(userId: string) {
   });
 
   const eventIds = Array.from(new Set(portfolio.map((trade) => trade.eventId)));
-  console.log("Ids", eventIds);
+  
   const events = await prisma.event.findMany({
     where: { id: { in: eventIds } },
   });
@@ -23,5 +23,5 @@ export async function getOrders(userId: string) {
       "Unknown Event",
   }));
   return portfolioWithTitles
-  console.log(portfolioWithTitles)
+ 
 }
