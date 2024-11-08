@@ -1,0 +1,84 @@
+version: "3.8"
+
+services:
+  fe-service:
+    build:
+      context: ./client/
+      dockerfile: Dockerfile
+    container_name: client-service-container
+    ports:
+      - "3001:3000"
+
+  archiver-service:
+    build:
+      context: ./archiver/
+      dockerfile: Dockerfile
+    container_name: archiver-service-container
+    ports:
+      - "3003:3003"
+    environment:
+      - REDIS_URL=redis:6379
+    depends_on:
+      - redis
+
+  backend-service:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    container_name: backend-service-container
+    ports:
+      - "3000:3000"
+    environment:
+      - REDIS_URL=redis:6379
+      - REDIS_URL_2=redis2:6379
+    depends_on:
+      - redis
+      - redis2
+
+  orderbook-service:
+    build:
+      context: ./orderbook/
+      dockerfile: Dockerfile
+    container_name: order-service-container
+    ports:
+      - "3002:3002"
+    environment:
+      - REDIS_URL=redis:6379
+      - REDIS_URL_2=redis2:6379
+    depends_on:
+      - redis
+      - redis2
+
+  websocket-service:
+    build:
+      context: ./websocket/
+      dockerfile: Dockerfile
+    container_name: websocket-service-container
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_URL=redis:6379
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    container_name: redis-container1
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  redis2:
+    image: redis:alpine
+    container_name: redis-container2
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis2-data:/data
+
+volumes:
+  redis-data:
+    driver: local
+  redis2-data:
+    driver: local

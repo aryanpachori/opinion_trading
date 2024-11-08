@@ -4,7 +4,7 @@ import { inMemoryOrderBooks } from "./global";
 
 export const redis = createClient({
   socket: {
-    host: "localhost",
+    host: "redis",
     port: 6379,
   },
 });

@@ -3,15 +3,15 @@ import { createClient } from "redis";
 
 export const redis = createClient({
   socket: {
-    host: "localhost",
+    host: "redis",
     port: 6379,
   },
 });
 
 export const redis2 = createClient({
   socket: {
-    host: "localhost",
-    port: 6380,
+    host: "redis2",
+    port: 6379,
   },
 });
 
