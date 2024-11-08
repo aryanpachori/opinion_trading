@@ -61,7 +61,7 @@ const Page = () => {
   async function handleExit(trade: Trade) {
     const { id, price, Quantity, eventId, Side, userId } = trade;
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/event/exit`,
+      `http://backend-service:3000/v1/event/exit`,
       {
         userId,
         eventId,

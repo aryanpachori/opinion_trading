@@ -2,7 +2,7 @@
 import axios from "axios";
 export async function getBalance(userId: string) {
   const response = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/user/balance`,
+    `http://backend-service:3000/v1/user/balance`,
     {
       userId,
     }
@@ -16,6 +16,6 @@ export async function getBalance(userId: string) {
     return balance;
   } else {
     throw new Error("Balance not found");
-    return;
+    
   }
 }

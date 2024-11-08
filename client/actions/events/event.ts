@@ -3,7 +3,7 @@
 import axios from "axios";
 
 export async function getEvents() {
-  const response = await axios.post(`${process.env.BACKEND_URL}/event`);
+  const response = await axios.post(`http://backend-service:3000/v1/event`);
 
   if (response.status == 200) {
     console.log("responseData :",response.data)

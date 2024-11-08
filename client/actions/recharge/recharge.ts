@@ -3,7 +3,7 @@ import axios from "axios";
 
 export async function recharge(userId: string, depositAmount: number) {
   const response = await axios.post(
-    ` ${process.env.BACKEND_URL}/user/recharge`,
+    ` http://backend-service:3000/v1/user/recharge`,
     {
       userId,
       amount: depositAmount,

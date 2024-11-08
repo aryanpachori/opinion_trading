@@ -61,7 +61,7 @@ const DepositForm = () => {
     }
 
     const isRechargeDone = await axios.post(
-      ` ${process.env.NEXT_PUBLIC_API_URL}/user/recharge`,
+      ` http://localhost:3000/v1/user/recharge`,
       {
         userId,
         amount: depositAmount,

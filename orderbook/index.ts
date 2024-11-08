@@ -75,7 +75,8 @@ setInterval(() => {
   processQueue();
 }, 1000);
 
-loadSnapshot();
+//loadSnapshot();
+loadFromS3();
 setInterval(() => {
   saveSnapshot(
     inMemoryOrderBooks,
@@ -92,5 +93,5 @@ saveSnapshot(
   inMemory_OrderId,
   inMemory_trades
 );
-//loadFromS3();
+
 console.log(inMemoryOrderBooks, inr_balances);

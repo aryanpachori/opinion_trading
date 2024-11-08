@@ -51,7 +51,7 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
             },
           });
-           axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/signin`, {
+           axios.post(`http://backend-service:3000/v1/user/signin`, {
             userId: newUser.id,
           });
           user.id = newUser.id;
