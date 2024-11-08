@@ -68,7 +68,7 @@ export default function OrderBook({ eventId }: OrderBookProps) {
   useEffect(() => {
     async function eventDetails() {
       const response = await axios.post(
-        `http://backend-service:3000/v1/event/getEvent`,
+        `http://localhost:3000/v1/event/getEvent`,
         {
           eventId,
         }
@@ -125,7 +125,7 @@ export default function OrderBook({ eventId }: OrderBookProps) {
       return;
     }
     const response = await axios.post(
-      `http://backend-service:3000/v1/event/initiate`,
+      `http://localhost:3000/v1/event/initiate`,
       {
         userId,
         eventId: eventId,
