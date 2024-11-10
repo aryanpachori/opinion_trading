@@ -85,7 +85,7 @@ setInterval(() => {
     inMemory_OrderId,
     inMemory_trades
   );
-}, 10000);
+}, 100000);
 saveSnapshot(
   inMemoryOrderBooks,
   inr_balances,
