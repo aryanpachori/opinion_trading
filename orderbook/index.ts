@@ -17,7 +17,7 @@ import {
   inMemoryOrderBooks,
   inr_balances,
 } from "./utils/global";
-import { loadFromS3 } from "./service/s3";
+import { loadFromS3, saveToS3 } from "./service/s3";
 
 const app = express();
 
@@ -26,10 +26,10 @@ app.use(bodyParser.json());
 app.use("/v1/worker", orderRouter);
 async function processQueue() {
   while (true) {
-    const data: any = await redis2.brPop("engineQueue",0);
+    const data: any = await redis2.brPop("engineQueue", 0);
     if (!data) continue;
     console.log(data);
-    const {element} = data
+    const { element } = data;
     const message = JSON.parse(element);
     console.log(message);
     const { type } = message;
@@ -78,20 +78,15 @@ setInterval(() => {
 //loadSnapshot();
 loadFromS3();
 setInterval(() => {
-  saveSnapshot(
-    inMemoryOrderBooks,
-    inr_balances,
-    inMemory_events,
-    inMemory_OrderId,
-    inMemory_trades
-  );
+  const snapshot = {
+    orderbook: inMemoryOrderBooks,
+    balances: inr_balances,
+    events: inMemory_events,
+    orderIds: inMemory_OrderId,
+    trades: inMemory_trades,
+    timstamp: new Date().toISOString(),
+  };
+  saveToS3(snapshot);
 }, 100000);
-saveSnapshot(
-  inMemoryOrderBooks,
-  inr_balances,
-  inMemory_events,
-  inMemory_OrderId,
-  inMemory_trades
-);
 
 console.log(inMemoryOrderBooks, inr_balances);
