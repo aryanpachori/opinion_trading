@@ -75,8 +75,8 @@ setInterval(() => {
   processQueue();
 }, 1000);
 
-//loadSnapshot();
-loadFromS3();
+loadSnapshot();
+//loadFromS3();
 setInterval(() => {
   const snapshot = {
     orderbook: inMemoryOrderBooks,
@@ -86,7 +86,13 @@ setInterval(() => {
     trades: inMemory_trades,
     timstamp: new Date().toISOString(),
   };
-  saveToS3(snapshot);
-}, 100000);
+  saveSnapshot(
+    inMemoryOrderBooks,
+    inr_balances,
+    inMemory_events,
+    inMemory_OrderId,
+    inMemory_trades
+  );
+}, 1000000);
 
 console.log(inMemoryOrderBooks, inr_balances);

@@ -1,6 +1,6 @@
 import fs from "fs";
 
-const path = "C:\\Users\\aryan\\Web Development\\opinion_trading\\db.json";
+const path = '/app/data/db.json';
 import {
   inMemory_events,
   inMemory_OrderId,
@@ -24,7 +24,7 @@ export function saveSnapshot(
     trades: inMemory_trades,
     timstamp: new Date().toISOString(),
   };
-  saveToS3(snapshot);
+  //saveToS3(snapshot);
   fs.writeFileSync(path, JSON.stringify(snapshot));
 }
 

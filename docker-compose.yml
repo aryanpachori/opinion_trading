@@ -52,6 +52,8 @@ services:
     depends_on:
       - redis
       - redis2
+    volumes:
+    - orderbook-data:/app/data/db.json # Use a Docker volume instead of a host directory
 
   websocket-service:
     build:
@@ -87,3 +89,4 @@ volumes:
     driver: local
   redis2-data:
     driver: local
+  orderbook-data:
